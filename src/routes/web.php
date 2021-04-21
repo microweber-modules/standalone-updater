@@ -18,7 +18,7 @@ api_expose_admin('standalone-update-now', function () {
 
     $redirectLink = site_url() . $updateCacheFolderName .'/'. $randomFileUpdateName;
 
-    copy(  dirname(__DIR__) . '/mw-black-logo.png', $updateCacheDir . DS . 'mw-black-logo.png');
+    // copy(  dirname(__DIR__) . '/mw-black-logo.png', $updateCacheDir . DS . 'mw-black-logo.png');
 
     $sourceUpdater = file_get_contents(dirname(__DIR__) .'/StandaloneUpdateExecutor.source');
 
