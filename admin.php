@@ -27,6 +27,19 @@ $latestVersionDetails = latest_version();
                 Latest available version: <b><?php echo $latestVersionDetails['version']; ?></b> <br />
                 Release date: <b><?php echo $latestVersionDetails['build_date']; ?></b>
                 <br />
+                <br />
+
+                <?php
+                if ($latestVersionDetails['version'] == MW_VERSION) {
+                    ?>
+                    <h2><i class="mdi mdi-check"></i> You are up to date!</h2>
+                    <?php
+                } else {
+                ?>
+
+                <?php
+                }
+                ?>
 
             </div>
         </div>
