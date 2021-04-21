@@ -24,7 +24,7 @@ $latestVersionDetails = latest_version();
                 <h6>with Standalone Updater</h6>
 
                 Your current version: <b><?php echo MW_VERSION; ?></b> <br />
-                Latest available version: <b><?php echo $latestVersionDetails['version']; ?></b>
+                Latest available version: <b><?php echo $latestVersionDetails['version']; ?></b> <br />
                 Release date: <b><?php echo $latestVersionDetails['build_date']; ?></b>
                 <br />
 
