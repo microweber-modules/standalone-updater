@@ -8,7 +8,7 @@ class StandaloneUpdateExecutor
 
     public function log($log)
     {
-        @file_get_contents($this->getLogfile(), $log);
+        @file_put_contents($this->getLogfile(), $log);
     }
 
     public function getInstallSessionId()
