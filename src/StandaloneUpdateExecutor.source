@@ -3,6 +3,13 @@
 class StandaloneUpdateExecutor
 {
 
+    public $time = 0;
+
+    public function __construct()
+    {
+        $this->time = time();
+    }
+
     public function run()
     {
         $latestVersion = $this->latestVersion();
@@ -10,9 +17,7 @@ class StandaloneUpdateExecutor
             echo "Can't update the version now.";
             return;
         }
-
-        $download = $this->download($latestVersion['url'],'latest.zip');
-
+      //  $download = $this->download($latestVersion['url'],$this->time.'latest.zip');
 
         echo 'mamo!';
     }
@@ -26,7 +31,7 @@ class StandaloneUpdateExecutor
 
     public function download($url, $dest)
     {
-        $logFile = 'log.txt';
+        $logFile = $this->time . 'log.txt';
         $options = array(
             CURLOPT_FILE => is_resource($dest) ? $dest : fopen($dest, 'w'),
             CURLOPT_FOLLOWLOCATION => true,
