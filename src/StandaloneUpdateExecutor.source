@@ -6,6 +6,11 @@ class StandaloneUpdateExecutor
         return $this->getInstallSessionId() . 'log.txt';
     }
 
+    public function log($log)
+    {
+        @file_get_contents($this->getLogfile(), $log);
+    }
+
     public function getInstallSessionId()
     {
         return $_COOKIE['install_session_id'];
@@ -42,6 +47,8 @@ class StandaloneUpdateExecutor
             echo "Can't update the version now.";
             return;
         }
+
+        $this->log('Downloading latest version of microweber.');
 
        return $this->downloadFile($latestVersion['url'], 'latest.zip');
     }
