@@ -23,6 +23,19 @@ if ($latestVersionDetails['version'] == $currentVersion) {
         </h5>
     </div>
 
+    <?php if (!$isUpToDate):  ?>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.get("<?php echo site_url('api/standalone-update-now'); ?>", function (data) {
+                if (data.success) {
+                    $('.js-standalone-updater-update-button').attr('href', data.redirect_to);
+                    $('.js-standalone-updater-update-button').html('<i class="mdi mdi-update"></i> Update now!');
+                }
+            });
+        });
+    </script>
+    <?php endif; ?>
+
     <div class="card-body pt-3">
 
         <div class="card <?php if ($isUpToDate):  ?>card-success<?php else: ?> card-danger <?php endif; ?> text-center">
@@ -42,7 +55,7 @@ if ($latestVersionDetails['version'] == $currentVersion) {
                 } else {
                 ?>
                     Your version is old!<br />
-                    <a href="<?php echo route('module.standalone-updater.update'); ?>"class="btn btn-success"><i class="mdi mdi-update"></i> Update now!</a>
+                    <a href="" target="_blank" class="btn btn-success js-standalone-updater-update-button">Loading..</a>
                 <?php
                 }
                 ?>

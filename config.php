@@ -10,7 +10,6 @@ $config['categories'] = "other";
 $config['position'] = 1;
 $config['version'] = 1;
 
-
 $config['settings']['service_provider'] = [
     \MicroweberPackages\StandaloneUpdater\StandaloneUpdaterServiceProvider::class
 ];
