@@ -20,6 +20,8 @@ api_expose_admin('standalone-update-now', function () {
 
     // copy(  dirname(__DIR__) . '/mw-black-logo.png', $updateCacheDir . DS . 'mw-black-logo.png');
 
+   //  copy(  dirname(__DIR__) . '/Microweber-logo-reveal.mp4', $updateCacheDir . DS . 'Microweber-logo-reveal.mp4');
+
     $sourceUpdater = file_get_contents(dirname(__DIR__) .'/StandaloneUpdateExecutor.source');
 
     $save = file_put_contents($updateCacheDir . DS . $randomFileUpdateName, $sourceUpdater);

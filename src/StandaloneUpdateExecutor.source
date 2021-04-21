@@ -120,11 +120,18 @@ $update->run();
 
         <div class="p-5 mb-4 bg-light rounded-3">
           <div class="container-fluid py-5">
+
+              <!-- <video width="100%" muted autoplay controls>
+                <source src="Microweber-logo-reveal.mp4" type="video/mp4">
+              Your browser does not support the video tag.
+              </video>-->
+
             <h1 class="display-5 fw-bold">Updating the softoware</h1>
 
               <div class="js-update-log">
                   Loading...
               </div>
+
 
           </div>
         </div>
