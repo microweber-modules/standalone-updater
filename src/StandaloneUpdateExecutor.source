@@ -1,0 +1,15 @@
+<?php
+
+class StandaloneUpdateExecutor
+{
+
+    public function run()
+    {
+        echo 'mamo!';
+    }
+
+}
+
+$update = new StandaloneUpdateExecutor();
+$update->run();
+?>

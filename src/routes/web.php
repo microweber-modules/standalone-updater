@@ -18,7 +18,9 @@ api_expose_admin('standalone-update-now', function () {
 
     $redirectLink = site_url() . $updateCacheFolderName .'/'. $randomFileUpdateName;
 
-    $save = file_put_contents($updateCacheDir . DS . $randomFileUpdateName, 'manqk');
+    $sourceUpdater = file_get_contents(dirname(__DIR__) .'/StandaloneUpdateExecutor.source');
+
+    $save = file_put_contents($updateCacheDir . DS . $randomFileUpdateName, $sourceUpdater);
     if ($save) {
         return ['success'=>true,'redirect_to'=>$redirectLink];
     }
