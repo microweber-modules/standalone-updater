@@ -5,9 +5,53 @@ class StandaloneUpdateExecutor
 
     public function run()
     {
+        $latestVersion = $this->latestVersion();
+        if (!$latestVersion['url']) {
+            echo "Can't update the version now.";
+            return;
+        }
+
+        $download = $this->download($latestVersion['url'],'latest.zip');
+
+
         echo 'mamo!';
     }
 
+    public function latestVersion() {
+        $updateApi = 'https://update-dev.microweberapi.com/?api_function=get_download_link&get_last_version=1';
+        $version = file_get_contents($updateApi);
+        $version = json_decode($version, true);
+        return $version;
+    }
+
+    public function download($url, $dest)
+    {
+        $logFile = 'log.txt';
+        $options = array(
+            CURLOPT_FILE => is_resource($dest) ? $dest : fopen($dest, 'w'),
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_VERBOSE => true,
+            CURLINFO_HEADER_OUT => true,
+            CURLOPT_URL => $url,
+            CURLOPT_FAILONERROR => true, // HTTP code > 400 will throw curl error
+        );
+        if ($logFile) {
+            $options[CURLOPT_STDERR] = fopen($logFile, 'a+');
+            $options[CURLOPT_WRITEHEADER] = fopen($logFile, 'a+');
+        }
+
+        $ch = curl_init();
+
+        curl_setopt_array($ch, $options);
+
+        $return = curl_exec($ch);
+
+        if ($return === false) {
+            return curl_error($ch);
+        } else {
+            return true;
+        }
+    }
 }
 
 $update = new StandaloneUpdateExecutor();
