@@ -8,7 +8,7 @@ class StandaloneUpdateExecutor
 
     public function log($log)
     {
-        @file_put_contents($this->getLogfile(), $log);
+        @file_put_contents($this->getLogfile(), $log . PHP_EOL);
     }
 
     public function getInstallSessionId()
@@ -22,7 +22,10 @@ class StandaloneUpdateExecutor
 
         if (!isset($_COOKIE['install_session_id']) || $_COOKIE['install_session_id'] == $updateFileName) {
             setcookie('install_session_id', $updateFileName, time() + (86400 * 30), "/");
+
+            $this->log('Starting the installation session..');
         }
+
     }
 
     public function isStarted()
