@@ -1,17 +1,14 @@
 <?php must_have_access(); ?>
 
 <?php
-$from_live_edit = false;
-if (isset($params["live_edit"]) and $params["live_edit"]) {
-    $from_live_edit = $params["live_edit"];
-}
+$latestVersionDetails = latest_version();
 ?>
 
 <?php if (isset($params['backend'])): ?>
     <module type="admin/modules/info"/>
 <?php endif; ?>
 
-<div class="card style-1 mb-3 <?php if ($from_live_edit): ?>card-in-live-edit<?php endif; ?>">
+<div class="card style-1 mb-3">
     <div class="card-header">
         <?php $module_info = module_info($params['module']); ?>
         <h5>
@@ -21,7 +18,18 @@ if (isset($params["live_edit"]) and $params["live_edit"]) {
 
     <div class="card-body pt-3">
 
-fwafwafwafwa
+        <div class="card card-success text-center">
+            <div class="card-body">
+                <h4>Easy update your microweber website</h4>
+                <h6>with Standalone Updater</h6>
+
+                Your current version: <b><?php echo MW_VERSION; ?></b> <br />
+                Latest available version: <b><?php echo $latestVersionDetails['version']; ?></b>
+                Release date: <b><?php echo $latestVersionDetails['build_date']; ?></b>
+                <br />
+
+            </div>
+        </div>
 
     </div>
 </div>
