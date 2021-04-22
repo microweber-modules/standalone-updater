@@ -9,10 +9,10 @@
 
 api_expose_admin('standalone-update-now', function () {
 
-    $updateCacheFolderName = 'standalone-update/' . rand(222,444) . time(). '/' ;
+    $updateCacheFolderName = 'standalone-update'. DS. rand(222,444) . time(). '/' ;
     $updateCacheDir = base_path() . DS . $updateCacheFolderName;
 
-    delete_recursive($updateCacheDir);
+    delete_recursive(base_path() . DS . 'standalone-update');
     mkdir_recursive($updateCacheDir);
 
     $randomFolderUpdateName = rand(222,444) . time(). '-mw-update.php';
