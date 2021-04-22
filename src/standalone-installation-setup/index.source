@@ -30,18 +30,28 @@
   <body>
   <script type="text/javascript">
     $(document).ready(function() {
-        <?php if($update->isStarted() == false): ?>
-        $('.js-update-log').html('Starting...');
-        $.get("?startUpdating=1", function(update) {
-            // start read log
-        });
-        <?php endif;  ?>
 
-        $.get("?getLogfile=1", function(data) {
-            readLog(data.logfile);
-        });
+        $('.js-update-log').html('Loading...');
 
+        // Check is started
+        $.get("actions.php?isStarted=1&format=json", function(data) {
+            if (data.started) {
+                // If is started we want to read log file
+                $.get("actions.php?getLogfile=1&format=json", function(data) {
+                    readLog(data.logfile);
+                });
+            } else {
+                // else not started we want to start the process
+                $.get("actions.php?start=1&format=json", function(data) {
+                   // and now we can read log
+                    $.get("actions.php?getLogfile=1&format=json", function(data) {
+                        readLog(data.logfile);
+                    });
+                });
+            }
+        });
     });
+
     function readLog(logfile)
     {
         setInterval(function () {
@@ -98,8 +108,6 @@
         </footer>
       </div>
     </main>
-
-
 
     <!-- Optional JavaScript; choose one of the two! -->
 

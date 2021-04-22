@@ -18,14 +18,10 @@ class StandaloneUpdateExecutor
 
     public function start()
     {
-        $updateFileName = basename(__FILE__, '.php');
-
-        if (!isset($_COOKIE['install_session_id']) || $_COOKIE['install_session_id'] == $updateFileName) {
-            setcookie('install_session_id', $updateFileName, time() + (1800), "/");
-
+        if (!isset($_COOKIE['install_session_id'])) {
+            setcookie('install_session_id', rand(2222,4444), time() + (1800), "/");
             $this->log('Starting the installation session..');
         }
-
     }
 
     public function isStarted()
@@ -86,21 +82,30 @@ class StandaloneUpdateExecutor
     }
 }
 
-if (isset($_GET['startUpdating']) && $_GET['startUpdating'] == 1) {
-    $update = new StandaloneUpdateExecutor();
-    return $update->startUpdating();
-}
+if (isset($_GET['format']) && $_GET['format'] == "json") {
 
-if (isset($_GET['getLogfile']) && $_GET['getLogfile'] == 1) {
-
+    $json = [];
     header('Content-Type: application/json');
 
-    $update = new StandaloneUpdateExecutor();
-    $status = ['logfile'=>$update->getLogfile()];
+    if (isset($_GET['start']) && $_GET['start'] == 1) {
+        $update = new StandaloneUpdateExecutor();
+        $json['start'] = $update->start();
+    }
 
-    die(json_encode($status));
+    if (isset($_GET['startUpdating']) && $_GET['startUpdating'] == 1) {
+        $update = new StandaloneUpdateExecutor();
+        $json['updating'] = $update->startUpdating();
+    }
+
+    if (isset($_GET['isStarted']) && $_GET['isStarted'] == 1) {
+        $update = new StandaloneUpdateExecutor();
+        $json['started'] = $update->isStarted();
+    }
+
+    if (isset($_GET['getLogfile']) && $_GET['getLogfile'] == 1) {
+        $update = new StandaloneUpdateExecutor();
+        $json['logfile'] = $update->getLogfile();
+    }
+
+    die(json_encode($json));
 }
-
-$update = new StandaloneUpdateExecutor();
-$update->start();
-?>
