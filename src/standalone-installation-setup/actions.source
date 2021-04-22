@@ -141,7 +141,6 @@ class StandaloneUpdateReplacer
 
     public function start()
     {
-
         $newFilesForCopy = [];
         $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath( $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'userfiles'.DIRECTORY_SEPARATOR.'templates'));
         $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath( $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'userfiles'.DIRECTORY_SEPARATOR.'modules'));
