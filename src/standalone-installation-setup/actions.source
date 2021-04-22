@@ -60,6 +60,8 @@ class StandaloneUpdateExecutor
         $unzip = new Unzip();
         $unzip->extract(__DIR__ . DIRECTORY_SEPARATOR . 'latest.zip', __DIR__ . DIRECTORY_SEPARATOR . 'latest-unziped/', true);
 
+        $microweberPath = dirname(dirname(__DIR__));
+
         $this->log(json_encode(['success'=>true, 'message'=>'Done! You are up to date!']));
     }
 
@@ -120,3 +122,60 @@ if (isset($_GET['format']) && $_GET['format'] == "json") {
 
     die(json_encode($json));
 }
+
+class StandaloneUpdateReplacer
+{
+    public $microweberPath;
+    public $newMicroweberPath;
+
+    public function __construct()
+    {
+        $this->microweberPath = dirname(dirname(__DIR__));
+        $this->newMicroweberPath = __DIR__ . DIRECTORY_SEPARATOR . 'latest-unziped';
+    }
+
+    public function start()
+    {
+
+        $newFilesForCopy = [];
+        $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath( $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'userfiles'.DIRECTORY_SEPARATOR.'templates'));
+        //$newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath( $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'userfiles'.DIRECTORY_SEPARATOR.'modules'));
+        //$newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath( $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'src'));
+        //$newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath( $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'vendor'));
+
+        foreach($newFilesForCopy as $newFile) {
+
+            // Check original file
+            if (is_file($this->microweberPath . $newFile['targetPath'])) {
+                @unlink($this->microweberPath . $newFile['targetPath']);
+            }
+
+            $newFileFolder = dirname($this->microweberPath . $newFile['targetPath']);
+            if (!is_dir($newFileFolder)) {
+                mkdir_recursive($newFileFolder);
+            }
+
+            copy($newFile['realPath'], $this->microweberPath . $newFile['targetPath']);
+
+        }
+    }
+
+    public function getFilesFromPath($path)
+    {
+        $filesMap = [];
+        $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \RecursiveDirectoryIterator::SKIP_DOTS), \RecursiveIteratorIterator::CHILD_FIRST);
+        foreach ($files as $fileinfo) {
+            if (!$fileinfo->isDir()) {
+
+                $targetPath = $fileinfo->getRealPath();
+                $targetPath = str_replace($this->newMicroweberPath,'', $targetPath);
+
+                $filesMap[] = ['realPath'=>$fileinfo->getRealPath(),'targetPath'=>$targetPath];
+            }
+        }
+        return $filesMap;
+    }
+}
+
+$replace = new StandaloneUpdateReplacer();
+$replace->start();
