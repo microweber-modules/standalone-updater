@@ -55,7 +55,7 @@ class StandaloneUpdateExecutor
             $this->log('The latest version of microweber is download successfully!');
         }
 
-        $this->log('Done! You are up to date!');
+        $this->log(json_encode(['success'=>true, 'message'=>'Done! You are up to date!']));
     }
 
     public function downloadFile($url, $dest)
