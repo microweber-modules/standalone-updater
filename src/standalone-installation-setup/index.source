@@ -62,11 +62,13 @@
     {
        readlogInterval = setInterval(function () {
             $.get(logfile, function (log) {
-                var jsonLogStatus = JSON.parse(log);
-                if (jsonLogStatus.success) {
-                    clearInterval(readlogInterval);
-                    $('.js-update-log').html(jsonLogStatus.message);
-                } else {
+                try {
+                    var jsonLogStatus = JSON.parse(log);
+                    if (jsonLogStatus.success) {
+                        clearInterval(readlogInterval);
+                        $('.js-update-log').html(jsonLogStatus.message);
+                    }
+                } catch(err) {
                     log = log.replace(/(?:\r\n|\r|\n)/g, '<br>');
                     $('.js-update-log').html(log);
                 }
