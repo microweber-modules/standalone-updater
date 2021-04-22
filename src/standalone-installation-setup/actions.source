@@ -91,7 +91,6 @@ class StandaloneUpdateExecutor
         curl_setopt_array($ch, $options);
 
         $return = curl_exec($ch);
-        curl_close($ch);
 
         if ($return === false) {
             return curl_error($ch);
@@ -142,32 +141,50 @@ class StandaloneUpdateReplacer
 
     public function start()
     {
-
         $newFilesForCopy = [];
         $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath( $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'userfiles'.DIRECTORY_SEPARATOR.'templates'));
-       // $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath( $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'userfiles'.DIRECTORY_SEPARATOR.'modules'));
-       // $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath( $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'src'));
-        //$newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath( $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'vendor'));
+        $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath( $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'userfiles'.DIRECTORY_SEPARATOR.'modules'));
+        $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath( $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'src'));
+        $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath( $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'vendor'));
 
         foreach($newFilesForCopy as $newFile) {
-
-            // Check original file
-            if (is_file($this->microweberPath . $newFile['targetPath'])) {
-                @unlink($this->microweberPath . $newFile['targetPath']);
-            }
 
             $newFileFolder = dirname($this->microweberPath . $newFile['targetPath']);
             if (!is_dir($newFileFolder)) {
                 mkdir_recursive($newFileFolder);
             }
 
-            if (md5_file($newFile['realPath']) && md5_file($this->microweberPath . $newFile['targetPath'])) {
-                continue;
+            if (is_file($this->microweberPath . $newFile['targetPath'])) {
+                if ($this->filesAreEqual($newFile['realPath'],$this->microweberPath . $newFile['targetPath'])) {
+                    continue;
+                }
+            }
+
+            if (is_file($this->microweberPath . $newFile['targetPath'])) {
+                @unlink($this->microweberPath . $newFile['targetPath']);
             }
 
             copy($newFile['realPath'], $this->microweberPath . $newFile['targetPath']);
 
         }
+    }
+
+    public function filesAreEqual($a, $b)
+    {
+        $a = file_get_contents($a);
+        $b = file_get_contents($b);
+
+        $a = preg_replace('/\s+/', '', $a);
+        $b = preg_replace('/\s+/', '', $b);
+
+        $a = trim($a);
+        $b = trim($b);
+
+        if ($a == $b) {
+            return true;
+        }
+
+        return false;
     }
 
     public function getFilesFromPath($path)
@@ -186,3 +203,6 @@ class StandaloneUpdateReplacer
         return $filesMap;
     }
 }
+/*
+$replace = new StandaloneUpdateReplacer();
+$replace->start();*/
