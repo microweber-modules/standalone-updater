@@ -1,4 +1,15 @@
 <?php
+define("INI_SYSTEM_CHECK_DISABLED", ini_get('disable_functions'));
+
+if (!strstr(INI_SYSTEM_CHECK_DISABLED, 'ini_set')) {
+    ini_set("memory_limit", "160M");
+    ini_set("set_time_limit", 0);
+}
+
+if (!strstr(INI_SYSTEM_CHECK_DISABLED, 'date_default_timezone_set')) {
+    date_default_timezone_set('America/Los_Angeles');
+}
+
 include_once 'Unzip.php';
 
 class StandaloneUpdateExecutor
@@ -74,9 +85,11 @@ class StandaloneUpdateExecutor
 
     public function downloadFile($url, $dest)
     {
+        set_time_limit(0);
         $logFile = $this->getLogfile();
         $options = array(
             CURLOPT_FILE => is_resource($dest) ? $dest : fopen($dest, 'w'),
+            CURLOPT_TIMEOUT => 600,
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_VERBOSE => true,
             CURLINFO_HEADER_OUT => true,
