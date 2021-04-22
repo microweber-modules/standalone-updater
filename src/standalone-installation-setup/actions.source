@@ -16,7 +16,7 @@ class StandaloneUpdateExecutor
         return $_COOKIE['install_session_id'];
     }
 
-    public function start()
+    public function startSession()
     {
         if (!isset($_COOKIE['install_session_id'])) {
             setcookie('install_session_id', rand(2222,4444), time() + (1800), "/");
@@ -87,9 +87,9 @@ if (isset($_GET['format']) && $_GET['format'] == "json") {
     $json = [];
     header('Content-Type: application/json');
 
-    if (isset($_GET['start']) && $_GET['start'] == 1) {
+    if (isset($_GET['startSession']) && $_GET['startSession'] == 1) {
         $update = new StandaloneUpdateExecutor();
-        $json['start'] = $update->start();
+        $json['start'] = $update->startSession();
     }
 
     if (isset($_GET['startUpdating']) && $_GET['startUpdating'] == 1) {

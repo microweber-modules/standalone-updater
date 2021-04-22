@@ -42,10 +42,14 @@
                 });
             } else {
                 // else not started we want to start the process
-                $.get("actions.php?start=1&format=json", function(data) {
+                $.get("actions.php?startSession=1&format=json", function(data) {
                    // and now we can read log
                     $.get("actions.php?getLogfile=1&format=json", function(data) {
                         readLog(data.logfile);
+                    });
+                    // start updating
+                    $.get("actions.php?startUpdating=1&format=json", function(data) {
+                        // updating
                     });
                 });
             }
@@ -56,6 +60,7 @@
     {
         setInterval(function () {
             $.get(logfile, function (log) {
+                log = log.replace(/(?:\r\n|\r|\n)/g, '<br>');
                 $('.js-update-log').html(log);
             });
         }, 700);
