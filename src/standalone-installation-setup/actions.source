@@ -57,10 +57,15 @@ class StandaloneUpdateExecutor
             $this->log('The latest version of microweber is download successfully!');
         }
 
+        $this->log('Unzipping the files...');
+
         $unzip = new Unzip();
         $unzip->extract(__DIR__ . DIRECTORY_SEPARATOR . 'latest.zip', __DIR__ . DIRECTORY_SEPARATOR . 'latest-unziped/', true);
 
-        $microweberPath = dirname(dirname(__DIR__));
+        $this->log('Replacing the new files...');
+
+        $replace = new StandaloneUpdateReplacer();
+        $replace->start();
 
         $this->log(json_encode(['success'=>true, 'message'=>'Done! You are up to date!']));
     }
@@ -139,9 +144,9 @@ class StandaloneUpdateReplacer
 
         $newFilesForCopy = [];
         $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath( $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'userfiles'.DIRECTORY_SEPARATOR.'templates'));
-        //$newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath( $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'userfiles'.DIRECTORY_SEPARATOR.'modules'));
-        //$newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath( $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'src'));
-        //$newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath( $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'vendor'));
+        $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath( $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'userfiles'.DIRECTORY_SEPARATOR.'modules'));
+        $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath( $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'src'));
+        $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath( $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'vendor'));
 
         foreach($newFilesForCopy as $newFile) {
 
@@ -176,6 +181,3 @@ class StandaloneUpdateReplacer
         return $filesMap;
     }
 }
-
-$replace = new StandaloneUpdateReplacer();
-$replace->start();
