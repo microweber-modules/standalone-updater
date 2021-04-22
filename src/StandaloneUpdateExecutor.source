@@ -21,7 +21,7 @@ class StandaloneUpdateExecutor
         $updateFileName = basename(__FILE__, '.php');
 
         if (!isset($_COOKIE['install_session_id']) || $_COOKIE['install_session_id'] == $updateFileName) {
-            setcookie('install_session_id', $updateFileName, time() + (86400 * 30), "/");
+            setcookie('install_session_id', $updateFileName, time() + (1800), "/");
 
             $this->log('Starting the installation session..');
         }
