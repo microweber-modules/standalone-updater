@@ -91,6 +91,7 @@ class StandaloneUpdateExecutor
         curl_setopt_array($ch, $options);
 
         $return = curl_exec($ch);
+        curl_close($ch);
 
         if ($return === false) {
             return curl_error($ch);

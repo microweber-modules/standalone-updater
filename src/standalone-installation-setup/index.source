@@ -48,9 +48,11 @@
                         readLog(data.logfile);
                     });
                     // start updating
+                    setTimeout(function() {
                     $.get("actions.php?startUpdating=1&format=json", function(data) {
                         // updating
                     });
+                    }, 800);
                 });
             }
         });
