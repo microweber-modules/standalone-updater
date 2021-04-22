@@ -144,9 +144,9 @@ class StandaloneUpdateReplacer
 
         $newFilesForCopy = [];
         $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath( $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'userfiles'.DIRECTORY_SEPARATOR.'templates'));
-        $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath( $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'userfiles'.DIRECTORY_SEPARATOR.'modules'));
-        $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath( $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'src'));
-        $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath( $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'vendor'));
+       // $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath( $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'userfiles'.DIRECTORY_SEPARATOR.'modules'));
+       // $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath( $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'src'));
+        //$newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath( $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'vendor'));
 
         foreach($newFilesForCopy as $newFile) {
 
@@ -158,6 +158,10 @@ class StandaloneUpdateReplacer
             $newFileFolder = dirname($this->microweberPath . $newFile['targetPath']);
             if (!is_dir($newFileFolder)) {
                 mkdir_recursive($newFileFolder);
+            }
+
+            if (md5_file($newFile['realPath']) && md5_file($this->microweberPath . $newFile['targetPath'])) {
+                continue;
             }
 
             copy($newFile['realPath'], $this->microweberPath . $newFile['targetPath']);
