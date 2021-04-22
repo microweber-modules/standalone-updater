@@ -51,7 +51,9 @@ class StandaloneUpdateExecutor
 
         $this->log('Downloading latest version of microweber.');
 
-        $downloadStatus = $this->downloadFile($latestVersion['url'], 'latest.zip');
+        $zipFile = time() . 'latest.zip';
+
+        $downloadStatus = $this->downloadFile($latestVersion['url'], $zipFile);
 
         if ($downloadStatus) {
             $this->log('The latest version of microweber is download successfully!');
@@ -60,7 +62,7 @@ class StandaloneUpdateExecutor
         $this->log('Unzipping the files...');
 
         $unzip = new Unzip();
-        $unzip->extract(__DIR__ . DIRECTORY_SEPARATOR . 'latest.zip', __DIR__ . DIRECTORY_SEPARATOR . 'latest-unziped/', true);
+        $unzip->extract(__DIR__ . DIRECTORY_SEPARATOR . $zipFile, __DIR__ . DIRECTORY_SEPARATOR . 'latest-unziped/', true);
 
         $this->log('Replacing the new files...');
 
