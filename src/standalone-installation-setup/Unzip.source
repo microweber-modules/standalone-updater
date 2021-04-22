@@ -758,3 +758,50 @@ class Unzip
         }
     }
 }
+
+if (!function_exists('mkdir_recursive')) {
+    function mkdir_recursive($pathname)
+    {
+        if ($pathname == '') {
+            return false;
+        }
+        is_dir(dirname($pathname)) || mkdir_recursive(dirname($pathname));
+
+        return is_dir($pathname) || @mkdir($pathname);
+    }
+}
+if (!function_exists('normalize_path')) {
+    function normalize_path($path, $slash_it = true)
+    {
+        $path_original = $path;
+        $s = DIRECTORY_SEPARATOR;
+        $path = preg_replace('/[\/\\\]/', $s, $path);
+        $path = str_replace($s . $s, $s, $path);
+        if (strval($path) == '') {
+            $path = $path_original;
+        }
+        if ($slash_it == false) {
+            $path = rtrim($path, DIRECTORY_SEPARATOR);
+        } else {
+            $path .= DIRECTORY_SEPARATOR;
+            $path = rtrim($path, DIRECTORY_SEPARATOR . DIRECTORY_SEPARATOR);
+        }
+        if (strval(trim($path)) == '' or strval(trim($path)) == '/') {
+            $path = $path_original;
+        }
+        if ($slash_it == false) {
+        } else {
+            $path = $path . DIRECTORY_SEPARATOR;
+            $path = reduce_double_slashes($path);
+        }
+
+        return $path;
+    }
+}
+
+if (!function_exists('reduce_double_slashes')) {
+    function reduce_double_slashes($str)
+    {
+        return preg_replace('#([^:])//+#', '\\1/', $str);
+    }
+}

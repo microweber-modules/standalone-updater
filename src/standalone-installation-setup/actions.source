@@ -1,4 +1,6 @@
 <?php
+include_once 'Unzip.php';
+
 class StandaloneUpdateExecutor
 {
     public function getLogfile()
@@ -55,7 +57,8 @@ class StandaloneUpdateExecutor
             $this->log('The latest version of microweber is download successfully!');
         }
 
-
+        $unzip = new Unzip();
+        $unzip->extract(__DIR__ . DIRECTORY_SEPARATOR . 'latest.zip', __DIR__ . DIRECTORY_SEPARATOR . 'latest-unziped/', true);
 
         $this->log(json_encode(['success'=>true, 'message'=>'Done! You are up to date!']));
     }
