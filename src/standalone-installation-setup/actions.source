@@ -1,0 +1,106 @@
+<?php
+class StandaloneUpdateExecutor
+{
+    public function getLogfile()
+    {
+        return $this->getInstallSessionId() . 'log.txt';
+    }
+
+    public function log($log)
+    {
+        @file_put_contents($this->getLogfile(), $log . PHP_EOL);
+    }
+
+    public function getInstallSessionId()
+    {
+        return $_COOKIE['install_session_id'];
+    }
+
+    public function start()
+    {
+        $updateFileName = basename(__FILE__, '.php');
+
+        if (!isset($_COOKIE['install_session_id']) || $_COOKIE['install_session_id'] == $updateFileName) {
+            setcookie('install_session_id', $updateFileName, time() + (1800), "/");
+
+            $this->log('Starting the installation session..');
+        }
+
+    }
+
+    public function isStarted()
+    {
+        if (!isset($_COOKIE['install_session_id'])) {
+            return false;
+        }
+        return true;
+    }
+
+    public function latestVersion() {
+        $updateApi = 'https://update-dev.microweberapi.com/?api_function=get_download_link&get_last_version=1';
+        $version = file_get_contents($updateApi);
+        $version = json_decode($version, true);
+        return $version;
+    }
+
+    public function startUpdating()
+    {
+        $latestVersion = $this->latestVersion();
+        if (!$latestVersion['url']) {
+            echo "Can't update the version now.";
+            return;
+        }
+
+        $this->log('Downloading latest version of microweber.');
+
+       return $this->downloadFile($latestVersion['url'], 'latest.zip');
+    }
+
+    public function downloadFile($url, $dest)
+    {
+        $logFile = $this->getLogfile();
+        $options = array(
+            CURLOPT_FILE => is_resource($dest) ? $dest : fopen($dest, 'w'),
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_VERBOSE => true,
+            CURLINFO_HEADER_OUT => true,
+            CURLOPT_URL => $url,
+            CURLOPT_FAILONERROR => true, // HTTP code > 400 will throw curl error
+        );
+        if ($logFile) {
+            $options[CURLOPT_STDERR] = fopen($logFile, 'a+');
+            $options[CURLOPT_WRITEHEADER] = fopen($logFile, 'a+');
+        }
+
+        $ch = curl_init();
+
+        curl_setopt_array($ch, $options);
+
+        $return = curl_exec($ch);
+
+        if ($return === false) {
+            return curl_error($ch);
+        } else {
+            return true;
+        }
+    }
+}
+
+if (isset($_GET['startUpdating']) && $_GET['startUpdating'] == 1) {
+    $update = new StandaloneUpdateExecutor();
+    return $update->startUpdating();
+}
+
+if (isset($_GET['getLogfile']) && $_GET['getLogfile'] == 1) {
+
+    header('Content-Type: application/json');
+
+    $update = new StandaloneUpdateExecutor();
+    $status = ['logfile'=>$update->getLogfile()];
+
+    die(json_encode($status));
+}
+
+$update = new StandaloneUpdateExecutor();
+$update->start();
+?>
