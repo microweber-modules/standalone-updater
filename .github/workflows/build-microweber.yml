@@ -15,12 +15,6 @@ jobs:
           zip -r latest-dev.zip `ls`
           mv latest-dev.zip ../../latest-dev.zip
       - run: |
-          git lfs install
-          git lfs track "*.zip"
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add ./microweber-builds/latest-dev.zip
-          git commit -m "New version builded"
-          git push
+          curl -T ./microweber-builds/latest-dev.zip ftp://${{ secrets.FTP_USERNAME }}:${{ secrets.FTP_PASSWORD }}@${{ secrets.FTP_HOST }}
       - run: |
           rm -rf ./microweber-builds/dev
