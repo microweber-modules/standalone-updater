@@ -182,6 +182,9 @@ class StandaloneUpdateReplacer
         $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath( $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'src'));
         $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath( $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'vendor'));
 
+        $newFilesForCopy[] = ['realPath'=>$this->newMicroweberPath . DIRECTORY_SEPARATOR . 'composer.lock','targetPath'=>'composer.lock'];
+        $newFilesForCopy[] = ['realPath'=>$this->newMicroweberPath . DIRECTORY_SEPARATOR . 'composer.json','targetPath'=>'composer.json'];
+
         foreach($newFilesForCopy as $newFile) {
 
             $newFileFolder = dirname($this->microweberPath . $newFile['targetPath']);
