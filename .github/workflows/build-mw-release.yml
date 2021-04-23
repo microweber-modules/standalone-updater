@@ -1,7 +1,0 @@
-name: Download Latest Release Zip
-  uses: creesch/github-latest-release-zip@v0.1.1
-  with:
-    owner: microweber
-    repo: microweber
-    # Path where the zip needs to be save. Should only be directories and not end in a filename
-    downloadPath: ./mw-builds
