@@ -7,8 +7,7 @@ jobs:
       - run: |
           mkdir ./microweber-builds/dev
           cd ./microweber-builds/dev/
-          git clone --branch dev https://github.com/microweber/microweber.git
-          composer install
+          git clone git@github.com:microweber/microweber.git
           rm -rf .git
           zip -r latest.zip `ls`
           mv latest.zip ../latest.zip
