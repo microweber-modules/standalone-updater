@@ -1,0 +1,11 @@
+name: Build Microweber From DEV
+
+on: [push]
+
+jobs:
+  mwbuild:
+    name: Run build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run composer install
+        run: composer install -n --prefer-dist
