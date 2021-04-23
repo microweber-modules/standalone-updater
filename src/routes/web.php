@@ -23,8 +23,6 @@ api_expose_admin('standalone-update-now', function () {
     delete_recursive(userfiles_path() . 'standalone-update');
     mkdir_recursive($updateCacheDir);
 
-    $randomFolderUpdateName = rand(222,444) . time(). '-mw-update.php';
-
     $redirectLink = site_url() . 'userfiles/' . $updateCacheFolderName;
 
     // copy(  dirname(__DIR__) . '/mw-black-logo.png', $updateCacheDir . DS . 'mw-black-logo.png');
