@@ -1,19 +1,13 @@
-name: Build Microweber
-
-on:
-  push:
-    branches: [ main ]
-
+on: push
 jobs:
-  build-microweber:
+  build:
     runs-on: ubuntu-latest
-
     steps:
-    - uses: shivammathur/setup-php@b7d1d9c9a92d8d8463ce36d7f60da34d461724f8
-      with:
-        php-version: '8.0'
-    - uses: actions/checkout@v2
-      with:
-        repository: microweber/microweber
-    - name: Install Dependencies
-      run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+      - uses: actions/checkout@v2
+      - run: |
+          date > generated.txt
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git commit -m "generated"
+          git push
