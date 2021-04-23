@@ -9,7 +9,9 @@ jobs:
           mkdir ./microweber-builds/dev
           cd ./microweber-builds/dev/
           git clone https://github.com/microweber/microweber.git
-          cd ./microweber 
+          cd ./microweber
+          git checkout dev
+          composer install
           rm -rf .git
           rm -rf .github
           zip -r latest-dev.zip `ls`
