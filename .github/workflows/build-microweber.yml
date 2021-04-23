@@ -14,8 +14,6 @@ jobs:
           rm -rf .github
           zip -r latest.zip `ls`
           mv latest.zip ../../latest.zip
-          cd ../../
-          rm -rf ./dev/microweber
       - run: |
           git lfs install
           git lfs track "*.zip"
