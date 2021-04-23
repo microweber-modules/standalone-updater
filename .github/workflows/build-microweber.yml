@@ -12,14 +12,15 @@ jobs:
           cd ./microweber 
           rm -rf .git
           rm -rf .github
-          zip -r latest.zip `ls`
-          mv latest.zip ../../latest.zip
+          zip -r latest-dev.zip `ls`
+          mv latest-dev.zip ../../latest-dev.zip
       - run: |
           git lfs install
           git lfs track "*.zip"
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add ./microweber-builds/latest.zip
+          git add ./microweber-builds/latest-dev.zip
           git commit -m "New version builded"
           git push
+      - run: |
           rm -rf ./microweber-builds/dev
