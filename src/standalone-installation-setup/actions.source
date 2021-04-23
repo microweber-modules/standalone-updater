@@ -52,28 +52,42 @@ class StandaloneUpdateExecutor
         return $version;
     }
 
+    public function latestDevVersion() {
+
+        $latestDevVersionZip = 'https://github.com/microweber-modules/standalone-updater/raw/main/microweber-builds/latest.zip';
+
+        return ['url'=>$latestDevVersionZip];
+    }
+
     public function startUpdating()
     {
-        $latestVersion = $this->latestVersion();
-        if (!$latestVersion['url']) {
-            echo "Can't update the version now.";
-            return;
+        $version = 'latest';
+
+        if (isset($_COOKIE['install_session_version'])  && $_COOKIE['install_session_version'] == 'dev') {
+            $version = 'latest developers';
+            $installVersion = $this->latestDevVersion();
+        } else {
+            $installVersion = $this->latestVersion();
+            if (!$installVersion['url']) {
+                echo "Can't update the version now.";
+                return;
+            }
         }
 
-        $this->log('Downloading latest version of microweber.');
+        $this->log('Downloading '.$version.' version of microweber.');
 
-        $zipFile = time() . 'latest.zip';
+        $zipFile = time() . 'mw-app.zip';
 
-        $downloadStatus = $this->downloadFile($latestVersion['url'], $zipFile);
+        $downloadStatus = $this->downloadFile($installVersion['url'], $zipFile);
 
         if ($downloadStatus) {
-            $this->log('The latest version of microweber is download successfully!');
+            $this->log('The '.$version.' version of microweber is download successfully!');
         }
 
         $this->log('Unzipping the files...');
 
         $unzip = new Unzip();
-        $unzip->extract(__DIR__ . DIRECTORY_SEPARATOR . $zipFile, __DIR__ . DIRECTORY_SEPARATOR . 'latest-unziped/', true);
+        $unzip->extract(__DIR__ . DIRECTORY_SEPARATOR . $zipFile, __DIR__ . DIRECTORY_SEPARATOR . 'mw-app-unziped/', true);
 
         $this->log('Replacing the new files...');
 
@@ -151,7 +165,7 @@ class StandaloneUpdateReplacer
     public function __construct()
     {
         $this->microweberPath = dirname(dirname(__DIR__));
-        $this->newMicroweberPath = __DIR__ . DIRECTORY_SEPARATOR . 'latest-unziped';
+        $this->newMicroweberPath = __DIR__ . DIRECTORY_SEPARATOR . 'mw-app-unziped';
     }
 
     public function start()
