@@ -17,18 +17,15 @@ api_expose_admin('standalone-update-now', function () {
 
     setcookie('install_session_id', false, time() - (1800 * 5), "/");
 
-    $updateCacheFolderName = 'standalone-update'. DS. rand(222,444) . time(). '/' ;
-    $updateCacheDir = userfiles_path() . DS . $updateCacheFolderName;
+    $updateCacheFolderName = 'standalone-update'. DS. rand(222,444) . time(). DS ;
+    $updateCacheDir = userfiles_path() . $updateCacheFolderName;
 
-    delete_recursive(userfiles_path() . DS . 'standalone-update');
+    delete_recursive(userfiles_path() . 'standalone-update');
     mkdir_recursive($updateCacheDir);
 
     $randomFolderUpdateName = rand(222,444) . time(). '-mw-update.php';
 
-    $redirectLink = site_url() . $updateCacheFolderName;
-
-    echo $redirectLink;
-    die();
+    $redirectLink = site_url() . 'userfiles/' . $updateCacheFolderName;
 
     // copy(  dirname(__DIR__) . '/mw-black-logo.png', $updateCacheDir . DS . 'mw-black-logo.png');
    //  copy(  dirname(__DIR__) . '/Microweber-logo-reveal.mp4', $updateCacheDir . DS . 'Microweber-logo-reveal.mp4');
@@ -43,8 +40,8 @@ api_expose_admin('standalone-update-now', function () {
     $saveUnzip = file_put_contents($updateCacheDir . DS . 'Unzip.php', $sourceUnzip);
 
     if ($saveActions && $saveIndex && $saveUnzip) {
-        return ['success'=>true,'redirect_to'=>$redirectLink];
+        return redirect($redirectLink);
     }
 
-    return ['success'=>false,'message'=>'Cant create update file.'];
+    return redirect(admin_url('view:modules/load_module:standalone-updater?message=Cant create update file.'));
 });
