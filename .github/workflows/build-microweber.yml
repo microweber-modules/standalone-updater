@@ -9,10 +9,11 @@ jobs:
           mkdir ./microweber-builds/dev
           cd ./microweber-builds/dev/
           git clone https://github.com/microweber/microweber.git
-          rm -rf ./microweber-builds/dev/.git
-          rm -rf ./microweber-builds/dev/.github
+          rm -rf ./microweber-builds/dev/microweber/.git
+          rm -rf ./microweber-builds/dev/microweber/.github
+          cd ./microweber-builds/dev/microweber/
           zip -r latest.zip `ls`
-          mv latest.zip ../latest.zip
+          mv latest.zip ../../latest.zip
           cd ./microweber-builds/
           rm -rf ./microweber-builds/dev/
       - run: |
