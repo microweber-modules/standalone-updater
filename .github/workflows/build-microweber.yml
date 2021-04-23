@@ -13,8 +13,3 @@ jobs:
           zip -r latest.zip `ls`
           mv latest.zip ../latest.zip
           rm -rf ./microweber-builds/dev/
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add .
-          git commit -m "New version builded"
-          git push
