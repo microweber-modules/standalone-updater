@@ -59,7 +59,7 @@ class StandaloneUpdateExecutor
 
     public function latestDevVersion() {
 
-        $latestDevVersionZip = 'https://updater.microweberapi.com/latest-dev.zip';
+        $latestDevVersionZip = 'http://updater.microweberapi.com/microweber-dev.zip';
 
         return ['url'=>$latestDevVersionZip];
     }
