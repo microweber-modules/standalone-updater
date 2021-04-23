@@ -69,7 +69,7 @@ class StandaloneUpdateExecutor
         $version = 'latest';
 
         if (isset($_COOKIE['install_session_version'])  && $_COOKIE['install_session_version'] == 'dev') {
-            $version = 'latest developers';
+            $version = 'developer';
             $installVersion = $this->latestDevVersion();
         } else {
             $installVersion = $this->latestVersion();
