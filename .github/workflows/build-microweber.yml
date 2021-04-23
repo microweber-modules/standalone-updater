@@ -5,6 +5,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: |
+          rm -rf ./microweber-builds/dev
           mkdir ./microweber-builds/dev
           cd ./microweber-builds/dev/
           git clone https://github.com/microweber/microweber.git
