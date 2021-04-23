@@ -11,8 +11,7 @@ jobs:
           rm -rf .git
           zip -r latest.zip `ls`
           mv latest.zip ../latest.zip
-      - run: |
-          date > ./microweber-builds/log.txt
+
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add .
