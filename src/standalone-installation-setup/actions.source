@@ -37,6 +37,11 @@ class StandaloneUpdateExecutor
         }
     }
 
+    public function setInstallVersion($version = 'latest')
+    {
+        setcookie('install_session_version', $version, time() + (1800), "/");
+    }
+
     public function isStarted()
     {
         if (!isset($_COOKIE['install_session_id'])) {
@@ -136,6 +141,7 @@ if (isset($_GET['format']) && $_GET['format'] == "json") {
 
     if (isset($_GET['startSession']) && $_GET['startSession'] == 1) {
         $update = new StandaloneUpdateExecutor();
+        $update->setInstallVersion($_GET['installVersion']);
         $json['start'] = $update->startSession();
     }
 

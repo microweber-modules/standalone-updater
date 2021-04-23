@@ -42,7 +42,7 @@
                 });
             } else {
                 // else not started we want to start the process
-                $.get("actions.php?startSession=1&format=json", function(data) {
+                $.get("actions.php?startSession=1&format=json&installVersion=<?php echo $_GET['installVersion']; ?>", function(data) {
                    // and now we can read log
                     $.get("actions.php?getLogfile=1&format=json", function(data) {
                         readLog(data.logfile);
