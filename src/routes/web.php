@@ -9,17 +9,26 @@
 
 api_expose_admin('standalone-update-now', function () {
 
+    if (isset($_POST['version']) && $_POST['version'] == 'dev') {
+        setcookie('install_session_version', 'dev', time() - (1800 * 5), "/");
+    } else {
+        setcookie('install_session_version', 'latest', time() - (1800 * 5), "/");
+    }
+
     setcookie('install_session_id', false, time() - (1800 * 5), "/");
 
     $updateCacheFolderName = 'standalone-update'. DS. rand(222,444) . time(). '/' ;
-    $updateCacheDir = base_path() . DS . $updateCacheFolderName;
+    $updateCacheDir = userfiles_path() . DS . $updateCacheFolderName;
 
-    delete_recursive(base_path() . DS . 'standalone-update');
+    delete_recursive(userfiles_path() . DS . 'standalone-update');
     mkdir_recursive($updateCacheDir);
 
     $randomFolderUpdateName = rand(222,444) . time(). '-mw-update.php';
 
     $redirectLink = site_url() . $updateCacheFolderName;
+
+    echo $redirectLink;
+    die();
 
     // copy(  dirname(__DIR__) . '/mw-black-logo.png', $updateCacheDir . DS . 'mw-black-logo.png');
    //  copy(  dirname(__DIR__) . '/Microweber-logo-reveal.mp4', $updateCacheDir . DS . 'Microweber-logo-reveal.mp4');
