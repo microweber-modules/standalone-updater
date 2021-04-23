@@ -14,6 +14,8 @@ jobs:
           mv latest.zip ../latest.zip
           rm -rf ./microweber-builds/dev/
       - run: |
+          git lfs install
+          git lfs track "*.zip"
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add ./microweber-builds/latest.zip
