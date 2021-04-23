@@ -1,0 +1,11 @@
+- name: Download Latest Release Zip
+  # You may pin to the exact commit or the version.
+  # uses: creesch/github-latest-release-zip@e361edfc3593d0dc313b8a2f3bbc266fa932c1e4
+  uses: creesch/github-latest-release-zip@v0.1.1
+  with:
+    # The Github user or organization that owns the repository
+    owner: microweber
+    # The repository name
+    repo: microweber
+    # Path where the zip needs to be save. Should only be directories and not end in a filename
+    downloadPath: ./mw-builds
