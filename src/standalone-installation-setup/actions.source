@@ -170,7 +170,7 @@ class StandaloneUpdateReplacer
 
     public function __construct()
     {
-        $this->microweberPath = dirname(dirname(__DIR__));
+        $this->microweberPath = dirname(dirname(dirname(__DIR__)));
         $this->newMicroweberPath = __DIR__ . DIRECTORY_SEPARATOR . 'mw-app-unziped';
     }
 
