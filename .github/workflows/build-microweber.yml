@@ -5,16 +5,21 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: |
+          rm -rf ./microweber-builds/dev
           mkdir ./microweber-builds/dev
-          cd ./microweber-builds/dev
-          git clone --branch dev https://github.com/microweber/microweber.git
-          composer install
-          cd ../
-          rm -rf ./dev
+          cd ./microweber-builds/dev/
+          git clone https://github.com/microweber/microweber.git
+          cd ./microweber 
+          rm -rf .git
+          rm -rf .github
+          zip -r latest.zip `ls`
+          mv latest.zip ../../latest.zip
       - run: |
-          date > ./microweber-builds/log.txt
+          git lfs install
+          git lfs track "*.zip"
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add .
+          git add ./microweber-builds/latest.zip
           git commit -m "New version builded"
           git push
+          rm -rf ./microweber-builds/dev
