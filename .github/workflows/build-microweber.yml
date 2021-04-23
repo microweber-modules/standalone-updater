@@ -22,4 +22,5 @@ jobs:
           git add ./microweber-builds/latest.zip
           git commit -m "New version builded"
           git push
+      - run: |
           rm -rf ./microweber-builds/dev
