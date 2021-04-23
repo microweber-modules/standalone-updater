@@ -8,7 +8,6 @@ jobs:
           mkdir ./microweber-builds/dev
           cd ./microweber-builds/dev/
           git clone https://github.com/microweber/microweber.git
-          git checkout dev
           rm -rf .git
           zip -r latest.zip `ls`
           mv latest.zip ../latest.zip
