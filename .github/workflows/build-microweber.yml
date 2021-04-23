@@ -5,11 +5,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: |
-          mkdir mw-dev
-          cd ./mw-dev
+          mkdir ./microweber-builds/dev
+          cd ./microweber-builds/dev
           git clone --branch dev https://github.com/microweber/microweber.git
+          composer install
+          cd ../
+          rm -rf ./dev
       - run: |
-          date > microweber-builds/log.txt
+          date > ./microweber-builds/log.txt
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add .
