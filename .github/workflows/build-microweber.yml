@@ -6,7 +6,7 @@ jobs:
       - uses: actions/checkout@v2
       - run: |
           mkdir ./microweber-builds/dev
-          cd ./microweber-builds/dev
+          cd ./microweber-builds/dev/
           git clone --branch dev https://github.com/microweber/microweber.git
           composer install
           cd ../
