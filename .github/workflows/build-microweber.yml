@@ -1,14 +1,11 @@
-name: Laravel
+name: Build Microweber
 
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
 
 jobs:
-  laravel-tests:
-
+  build-microweber:
     runs-on: ubuntu-latest
 
     steps:
@@ -16,8 +13,7 @@ jobs:
       with:
         php-version: '8.0'
     - uses: actions/checkout@v2
-    - name: Copy .env
-      run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+      with:
+        repository: microweber/microweber
     - name: Install Dependencies
       run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
-
