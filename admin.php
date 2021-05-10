@@ -6,7 +6,8 @@ $currentVersion = 1.3;
 $latestVersionDetails = latest_version();
 
 $isUpToDate = false;
-if ($latestVersionDetails['version'] == $currentVersion) {
+
+if (version_compare($currentVersion, $latestVersionDetails['version']) >= 0) {
     $isUpToDate = true;
 }
 ?>
