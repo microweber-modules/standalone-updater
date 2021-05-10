@@ -2,7 +2,7 @@
 
 <?php
 $currentVersion = MW_VERSION;
-$latestVersionDetails = latest_version(); 
+$latestVersionDetails = latest_version();
 
 $isUpToDate = false;
 
@@ -43,6 +43,9 @@ if (version_compare($currentVersion, $latestVersionDetails['version']) >= 0) {
                 } else {
                 ?>
                 Your version is old!<br/>
+                <?php
+                }
+                ?>
 
                 <form method="post" action="<?php echo site_url('api/standalone-update-now'); ?>">
                     <div class="d-flex justify-content-center">
@@ -55,13 +58,22 @@ if (version_compare($currentVersion, $latestVersionDetails['version']) >= 0) {
                                 </select>
                             </div>
                         </div>
-                        <button method="submit" class="btn btn-success js-standalone-updater-update-button"><i class="mdi mdi-update"></i> Update now!</button>
+
+                        <?php if ($isUpToDate) { ?>
+                            <button method="submit" class="btn btn-success js-standalone-updater-update-button"><i class="mdi mdi-cogs"></i> Reinstall</button>
+                            <?php
+                        } else {
+                            ?>
+                            <button method="submit" class="btn btn-success js-standalone-updater-update-button"><i class="mdi mdi-update"></i> Update now!</button>
+                            <?php
+                        }
+                        ?>
+
+
                     </div>
                 </form>
             </div>
-            <?php
-            }
-            ?>
+
         </div>
     </div>
 </div>

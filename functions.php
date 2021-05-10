@@ -8,7 +8,6 @@ function latest_version() {
     return $version;
 }
 
-
 function delete_recursive($dir)
 {
     if (!is_dir($dir)) {
