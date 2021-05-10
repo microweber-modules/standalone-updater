@@ -2,8 +2,7 @@
 
 <?php
 $currentVersion = MW_VERSION;
-$currentVersion = 1.3;
-$latestVersionDetails = latest_version();
+$latestVersionDetails = latest_version(); 
 
 $isUpToDate = false;
 
