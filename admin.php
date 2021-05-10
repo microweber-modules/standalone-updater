@@ -36,7 +36,6 @@ if (version_compare($currentVersion, $latestVersionDetails['version']) >= 0) {
                 Release date: <b><?php echo $latestVersionDetails['build_date']; ?></b>
                 <br/>
                 <br/>
-
                 <?php if ($isUpToDate) { ?>
                     <h2><i class="mdi mdi-check"></i> You are up to date!</h2>
                     <?php
@@ -46,7 +45,6 @@ if (version_compare($currentVersion, $latestVersionDetails['version']) >= 0) {
                 <?php
                 }
                 ?>
-
                 <form method="post" action="<?php echo site_url('api/standalone-update-now'); ?>">
                     <div class="d-flex justify-content-center">
                         <div class="form-group mb-0 mr-4">
@@ -68,8 +66,6 @@ if (version_compare($currentVersion, $latestVersionDetails['version']) >= 0) {
                             <?php
                         }
                         ?>
-
-
                     </div>
                 </form>
             </div>
