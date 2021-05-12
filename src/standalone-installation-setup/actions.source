@@ -101,7 +101,6 @@ class StandaloneUpdateExecutor
 
         $message = 'Done! You are up to date!';
 
-
         /*
         if (!empty($_COOKIE['site_url'])) {
             $siteUrl = $_COOKIE['site_url'];
@@ -222,6 +221,8 @@ class StandaloneUpdateReplacer
             copy($newFile['realPath'], $this->microweberPath . $newFile['targetPath']);
 
         }
+
+         $this->deleteDirectoryRecursive(dirname(__DIR__));
     }
 
     public function filesAreEqual($a, $b)
