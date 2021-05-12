@@ -79,14 +79,14 @@ class StandaloneUpdateExecutor
             }
         }
 
-        $this->log('Downloading '.$version.' version of microweber.');
+        $this->log('Downloading '.$version.' version of system.');
 
         $zipFile = time() . 'mw-app.zip';
 
         $downloadStatus = $this->downloadFile($installVersion['url'], $zipFile);
 
         if ($downloadStatus) {
-            $this->log('The '.$version.' version of microweber is download successfully!');
+            $this->log('The '.$version.' version of system is download successfully!');
         }
 
         $this->log('Unzipping the files...');
