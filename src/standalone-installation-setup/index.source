@@ -11,6 +11,59 @@
 
     <title>Microweber Standalone Update</title>
 
+  </head>
+  <body>
+
+  <script type="text/javascript">
+    $(document).ready(function() {
+
+        $('.js-update-log').html('Loading...');
+
+        // Check is started
+        $.get("actions.php?isStarted=1&format=json", function(data) {
+            if (data.started) {
+                // If is started we want to read log file
+                $.get("actions.php?getLogfile=1&format=json", function(data) {
+                    readLog(data.logfile);
+                });
+            } else {
+                // else not started we want to start the process
+                $.get("actions.php?startSession=1&format=json&installVersion=<?php echo $_GET['installVersion']; ?>", function(data) {
+                   // and now we can read log
+                    $.get("actions.php?getLogfile=1&format=json", function(data) {
+                        readLog(data.logfile);
+                    });
+                    // start updating
+                    setTimeout(function() {
+                    $.get("actions.php?startUpdating=1&format=json", function(data) {
+                        // updating
+                    });
+                    }, 800);
+                });
+            }
+        });
+    });
+
+    function readLog(logfile)
+    {
+       readlogInterval = setInterval(function () {
+            $.get(logfile, function (log) {
+                try {
+                    var jsonLogStatus = JSON.parse(log);
+                    if (jsonLogStatus.success) {
+                        clearInterval(readlogInterval);
+                        $('.js-update-log').html(jsonLogStatus.message);
+                    }
+                } catch(err) {
+                    log = log.replace(/(?:\r\n|\r|\n)/g, '<br>');
+                    $('.js-update-log').html(log);
+                }
+            });
+        }, 700);
+    }
+  </script>
+
+
 <style>
     .mw-standalone-loading {
         background-color:#4592ff;
@@ -147,59 +200,7 @@
     }
 </style>
 
-  </head>
-  <body>
-
-  <script type="text/javascript">
-    $(document).ready(function() {
-
-        $('.js-update-log').html('Loading...');
-
-        // Check is started
-        $.get("actions.php?isStarted=1&format=json", function(data) {
-            if (data.started) {
-                // If is started we want to read log file
-                $.get("actions.php?getLogfile=1&format=json", function(data) {
-                    readLog(data.logfile);
-                });
-            } else {
-                // else not started we want to start the process
-                $.get("actions.php?startSession=1&format=json&installVersion=<?php echo $_GET['installVersion']; ?>", function(data) {
-                   // and now we can read log
-                    $.get("actions.php?getLogfile=1&format=json", function(data) {
-                        readLog(data.logfile);
-                    });
-                    // start updating
-                    setTimeout(function() {
-                    $.get("actions.php?startUpdating=1&format=json", function(data) {
-                        // updating
-                    });
-                    }, 800);
-                });
-            }
-        });
-    });
-
-    function readLog(logfile)
-    {
-       readlogInterval = setInterval(function () {
-            $.get(logfile, function (log) {
-                try {
-                    var jsonLogStatus = JSON.parse(log);
-                    if (jsonLogStatus.success) {
-                        clearInterval(readlogInterval);
-                        $('.js-update-log').html(jsonLogStatus.message);
-                    }
-                } catch(err) {
-                    log = log.replace(/(?:\r\n|\r|\n)/g, '<br>');
-                    $('.js-update-log').html(log);
-                }
-            });
-        }, 700);
-    }
-  </script>
-
-    <div class="container mw-standalone-loading">
+    <div class="mw-standalone-loading">
         <div class="row flex-column align-items-center">
             <div class="blobs">
                 <div class="blob-center"></div>
@@ -226,7 +227,7 @@
                </h6>
             </div>
         </div>
-    </div>
+    </div> 
 
   </body>
 </html>

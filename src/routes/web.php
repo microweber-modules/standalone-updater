@@ -14,6 +14,7 @@ api_expose_admin('standalone-update-now', function () {
         $installVersion = 'dev';
     }
 
+    setcookie('redirect_after_update', site_url(), time() + (1800 * 5), "/");
     setcookie('install_session_id', false, time() - (1800 * 5), "/");
 
     $updateCacheFolderName = 'standalone-update'. DS. rand(222,444) . time(). DS ;
