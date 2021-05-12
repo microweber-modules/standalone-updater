@@ -99,12 +99,19 @@ class StandaloneUpdateExecutor
         $replace = new StandaloneUpdateReplacer();
         $replace->start();
 
-        $websiteUrl = '/';
-        if (!empty($_COOKIE['redirect_after_update'])) {
-            $websiteUrl = $_COOKIE['redirect_after_update'];
+        $message = 'Done! You are up to date!';
+
+        if (!empty($_COOKIE['site_url'])) {
+            $siteUrl = $_COOKIE['site_url'];
+            $message .= '<br /><a href="'.$siteUrl.'">Visit your website</a>';
         }
 
-        $this->log(json_encode(['success'=>true, 'message'=>'Done! You are up to date!<br /><a href="'.$websiteUrl.'">Visit your website</a>']));
+        if (!empty($_COOKIE['admin_url'])) {
+            $adminUrl = $_COOKIE['admin_url'];
+            $message .= 'or <a href="'.$adminUrl.'">Back to admin</a>';
+        }
+
+        $this->log(json_encode(['success'=>true, 'message'=>'']));
     }
 
     public function downloadFile($url, $dest)
