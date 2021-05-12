@@ -15,6 +15,12 @@ if (version_compare($currentVersion, $latestVersionDetails['version']) >= 0) {
     <module type="admin/modules/info"/>
 <?php endif; ?>
 
+<style>
+    .mw-standalone-icons {
+        font-size: 50px;
+    }
+</style>
+
 <div class="card style-1 m-3">
     <div class="card-header">
         <?php $module_info = module_info($params['module']); ?>
@@ -34,16 +40,16 @@ if (version_compare($currentVersion, $latestVersionDetails['version']) >= 0) {
                     <p>Your current version is <span class="font-weight-bold"><?php echo $currentVersion; ?></span></p>&nbsp;
                     <p class="mb-0">and the latest version is <span class="font-weight-bold"><?php echo $latestVersionDetails['version']; ?></span></p>
                     &nbsp;released on <?php echo $latestVersionDetails['build_date']; ?>
-                    <br><br>
+                <br><br>
 
                 </div>
                 <?php if ($isUpToDate) { ?>
                 <br> <br>
-                <h1 class="text-success"><i class="mdi mdi-check-circle-outline"></i><h4><h5 class="text-success font-weight-bold">  You are up to date!</h5></h4>
+                <h1 class="text-success"><i class="mw-standalone-icons mdi mdi-check-circle-outline"></i><h4><h5 class="text-success font-weight-bold">  You are up to date!</h5></h4>
                     <?php
                 } else { ?>
                 <br> <br>
-               <h1 class="text-danger"><i class="mdi mdi-close-circle-outline"></i></h1> <h5 class="text-danger font-weight-bold"> You're not up to date!</h5><br/>
+               <h1 class="text-danger"><i class="mw-standalone-icons mdi mdi-close-circle-outline"></i></h1> <h5 class="text-danger font-weight-bold"> You're not up to date!</h5><br/>
                     <?php } ?>
                 <br><br>
 
