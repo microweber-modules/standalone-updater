@@ -101,14 +101,16 @@ class StandaloneUpdateExecutor
 
         $message = 'Done! You are up to date!';
 
+
+        /*
         if (!empty($_COOKIE['site_url'])) {
             $siteUrl = $_COOKIE['site_url'];
             $message .= '<br /><a href="'.$siteUrl.'">Visit your website</a>';
-        }
+        }*/
 
         if (!empty($_COOKIE['admin_url'])) {
             $adminUrl = $_COOKIE['admin_url'];
-            $message .= 'or <a href="'.$adminUrl.'">Back to admin</a>';
+            $message .= '<a href="'.$adminUrl.'" class="btn btn-link">Back to admin</a>';
         }
 
         $this->log(json_encode(['success'=>true, 'message'=>'']));
