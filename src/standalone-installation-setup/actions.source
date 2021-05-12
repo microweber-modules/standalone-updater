@@ -99,7 +99,7 @@ class StandaloneUpdateExecutor
         $replace = new StandaloneUpdateReplacer();
         $replace->start();
 
-        $message = 'Done! You are up to date!';
+        $message = 'You are up to date!';
 
         /*
         if (!empty($_COOKIE['site_url'])) {
@@ -109,7 +109,7 @@ class StandaloneUpdateExecutor
 
         if (!empty($_COOKIE['admin_url'])) {
             $adminUrl = $_COOKIE['admin_url'];
-            $message .= '<a href="'.$adminUrl.'" class="btn btn-link">Back to admin</a>';
+            $message .= '<br /><a href="'.$adminUrl.'" class="btn btn-link" style="color:#fff">Back to admin</a>';
         }
 
         $this->log(json_encode(['success'=>true, 'message'=>$message]));

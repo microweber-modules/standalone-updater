@@ -52,6 +52,7 @@
                     var jsonLogStatus = JSON.parse(log);
                     if (jsonLogStatus.success) {
                         $('.blobs').hide();
+                        $('.js-updating-the-software-text').html('Done!');
                         clearInterval(readlogInterval);
                         $('.js-update-log').html(jsonLogStatus.message);
                     }
@@ -305,7 +306,7 @@
             </defs>
         </svg>
         <div class="mw-standalone-text p-5 text-center">
-            <h4 class="mb-2">Updating the software</h4>
+            <h4 class="mb-2 js-updating-the-software-text">Updating the software</h4>
             <h6 class="js-update-log">Loading...</h6>
         </div>
     </div>
