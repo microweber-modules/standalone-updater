@@ -222,7 +222,7 @@ class StandaloneUpdateReplacer
 
         }
 
-         $this->deleteDirectoryRecursive(dirname(__DIR__));
+        // $this->deleteDirectoryRecursive(dirname(__DIR__));
     }
 
     public function filesAreEqual($a, $b)
