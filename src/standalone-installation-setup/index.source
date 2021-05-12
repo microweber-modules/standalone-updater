@@ -51,6 +51,7 @@
                 try {
                     var jsonLogStatus = JSON.parse(log);
                     if (jsonLogStatus.success) {
+                        $('.blobs').hide();
                         clearInterval(readlogInterval);
                         $('.js-update-log').html(jsonLogStatus.message);
                     }

@@ -112,7 +112,7 @@ class StandaloneUpdateExecutor
             $message .= '<a href="'.$adminUrl.'" class="btn btn-link">Back to admin</a>';
         }
 
-        $this->log(json_encode(['success'=>true, 'message'=>'']));
+        $this->log(json_encode(['success'=>true, 'message'=>$message]));
     }
 
     public function downloadFile($url, $dest)
