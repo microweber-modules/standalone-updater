@@ -79,14 +79,14 @@ class StandaloneUpdateExecutor
             }
         }
 
-        $this->log('Downloading '.$version.' version of microweber.');
+        $this->log('Downloading '.$version.' version of system.');
 
         $zipFile = time() . 'mw-app.zip';
 
         $downloadStatus = $this->downloadFile($installVersion['url'], $zipFile);
 
         if ($downloadStatus) {
-            $this->log('The '.$version.' version of microweber is download successfully!');
+            $this->log('The '.$version.' version of system is download successfully!');
         }
 
         $this->log('Unzipping the files...');
@@ -99,7 +99,20 @@ class StandaloneUpdateExecutor
         $replace = new StandaloneUpdateReplacer();
         $replace->start();
 
-        $this->log(json_encode(['success'=>true, 'message'=>'Done! You are up to date!']));
+        $message = 'You are up to date!';
+
+        /*
+        if (!empty($_COOKIE['site_url'])) {
+            $siteUrl = $_COOKIE['site_url'];
+            $message .= '<br /><a href="'.$siteUrl.'">Visit your website</a>';
+        }*/
+
+        if (!empty($_COOKIE['admin_url'])) {
+            $adminUrl = $_COOKIE['admin_url'];
+            $message .= '<br /><a href="'.$adminUrl.'" class="btn btn-link" style="color:#fff">Back to admin</a>';
+        }
+
+        $this->log(json_encode(['success'=>true, 'message'=>$message]));
     }
 
     public function downloadFile($url, $dest)
@@ -208,6 +221,8 @@ class StandaloneUpdateReplacer
             copy($newFile['realPath'], $this->microweberPath . $newFile['targetPath']);
 
         }
+
+        // $this->deleteDirectoryRecursive(dirname(__DIR__));
     }
 
     public function filesAreEqual($a, $b)
