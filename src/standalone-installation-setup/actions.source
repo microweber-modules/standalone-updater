@@ -122,7 +122,7 @@ class StandaloneUpdateExecutor
         $options = array(
             CURLOPT_FILE => is_resource($dest) ? $dest : fopen($dest, 'w'),
             CURLOPT_TIMEOUT => 600,
-            CURLOPT_MAX_RECV_SPEED_LARGE => 1000000,
+            CURLOPT_MAX_RECV_SPEED_LARGE => 1000000, 
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_VERBOSE => true,
             CURLINFO_HEADER_OUT => true,
