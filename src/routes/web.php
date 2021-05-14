@@ -7,6 +7,10 @@
     })->name('module.standalone-updater.update');
 });*/
 
+api_expose_admin('standalone-update-delete-temp', function () {
+
+});
+
 api_expose_admin('standalone-update-now', function () {
 
     $installVersion = 'latest';
@@ -15,7 +19,7 @@ api_expose_admin('standalone-update-now', function () {
     }
 
     setcookie('max_receive_speed_download', get_option('max_receive_speed_download', 'standalone_updater'), time() + (1800 * 5), "/");
-    setcookie('admin_url', admin_url(), time() + (1800 * 5), "/");
+    setcookie('admin_url', admin_url('view:modules/load_module:standalone-updater?delete_temp=1'), time() + (1800 * 5), "/");
     setcookie('site_url', site_url(), time() + (1800 * 5), "/");
     setcookie('install_session_id', false, time() - (1800 * 5), "/");
 
