@@ -26,11 +26,13 @@ if (isset($_GET['delete_temp']) && $_GET['delete_temp']== 1):
 ?>
 <script type="text/javascript">
     $(document).ready(function () {
-        $.ajax({
-            url: "<?php echo api_url(); ?>standalone-update-delete-temp",
-        }).done(function() {
-            // deleted
-        });
+        setTimeout(function () {
+            $.ajax({
+                url: "<?php echo api_url(); ?>standalone-update-delete-temp",
+            }).done(function() {
+                // deleted
+            });
+        }, 1000);
     });
 </script>
 <?php
