@@ -226,7 +226,7 @@ class StandaloneUpdateReplacer
             }
 
             $standaloneUpdater = new StandaloneUpdateExecutor();
-            $standaloneUpdater->log('Copy ' . $newFile['realPath']);
+            $standaloneUpdater->log('Copy file ' . $newFile['realPath']);
 
             copy($newFile['realPath'], $this->microweberPath . $newFile['targetPath']);
 
