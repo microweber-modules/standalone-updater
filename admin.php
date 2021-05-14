@@ -40,6 +40,7 @@ if (isset($_GET['delete_temp']) && $_GET['delete_temp']== 1):
                 delete_temp_standalone();
             });
         }
+        delete_temp_standalone();
     });
 </script>
 <?php
