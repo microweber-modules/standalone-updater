@@ -122,13 +122,19 @@ class StandaloneUpdateExecutor
         $options = array(
             CURLOPT_FILE => is_resource($dest) ? $dest : fopen($dest, 'w'),
             CURLOPT_TIMEOUT => 600,
-            CURLOPT_MAX_RECV_SPEED_LARGE => 1000000,
+            CURLOPT_MAX_RECV_SPEED_LARGE => $speedLimit,
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_VERBOSE => true,
             CURLINFO_HEADER_OUT => true,
             CURLOPT_URL => $url,
             CURLOPT_FAILONERROR => true, // HTTP code > 400 will throw curl error
         );
+
+        if (isset($_COOKIE['max_receive_speed_download']) && $_COOKIE['max_receive_speed_download'] > 0) {
+            $speedLimit = (intval($_COOKIE['max_receive_speed_download']) * 1024 * 1024);
+            $options[CURLOPT_MAX_RECV_SPEED_LARGE] = $speedLimit;
+        }
+
         if ($logFile) {
             $options[CURLOPT_STDERR] = fopen($logFile, 'a+');
             $options[CURLOPT_WRITEHEADER] = fopen($logFile, 'a+');

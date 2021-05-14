@@ -14,6 +14,7 @@ api_expose_admin('standalone-update-now', function () {
         $installVersion = 'dev';
     }
 
+    setcookie('max_receive_speed_download', get_option('max_receive_speed_download', 'standalone_updater'), time() + (1800 * 5), "/");
     setcookie('admin_url', admin_url(), time() + (1800 * 5), "/");
     setcookie('site_url', site_url(), time() + (1800 * 5), "/");
     setcookie('install_session_id', false, time() - (1800 * 5), "/");
