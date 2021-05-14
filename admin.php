@@ -75,6 +75,35 @@ if (version_compare($currentVersion, $latestVersionDetails['version']) >= 0) {
                         }
                         ?>
                     </div>
+                    <div class="mb-0 mt-4 mr-4">
+                        <a href="#" onClick="$('.js-advanced-settings').toggle();"><?php echo _e('Advanced settings');?></a>
+                        <div class="js-advanced-settings" style="display:none">
+                            <div class="d-flex justify-content-center">
+                                <div class="form-group mb-0 mr-4">
+                                    <div class="input-group align-items-center">
+                                        <label>  <?php echo _e('Max receive speed download (per second)');?></label>
+                                        <select name="max_receive_speed_download" class="ml-4 form-control">
+                                            <option value="0">Unlimited</option>
+                                            <option value="5">5MB/s</option>
+                                            <option value="2">2MB/s</option>
+                                            <option value="1">1MB/s</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                </div>
+                                 <div class="d-flex justify-content-center">
+                                <div class="form-group mb-0 mr-4 mt-2"> 
+                                    <div class="input-group align-items-center">
+                                        <label>  <?php echo _e('Download method');?></label>
+                                        <select name="download_method" class="ml-4 form-control">
+                                            <option value="curl">CURL</option>
+                                            <option value="file_get_contents">File Get Contents</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>
