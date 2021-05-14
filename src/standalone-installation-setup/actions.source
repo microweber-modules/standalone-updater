@@ -234,9 +234,10 @@ class StandaloneUpdateReplacer
 
         }
 
+        /*
         $this->log('Delete cache folders..');
-
         $this->deleteDirectoryRecursive($this->newMicroweberPath);
+        */
     }
 
     public function filesAreEqual($a, $b)
