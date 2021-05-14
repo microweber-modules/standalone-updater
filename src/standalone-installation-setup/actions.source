@@ -229,7 +229,7 @@ class StandaloneUpdateReplacer
 
         }
 
-        // $this->deleteDirectoryRecursive(dirname(__DIR__));
+        $this->deleteDirectoryRecursive($this->newMicroweberPath);
     }
 
     public function filesAreEqual($a, $b)
