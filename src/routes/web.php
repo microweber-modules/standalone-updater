@@ -9,6 +9,20 @@
 
 api_expose_admin('standalone-update-delete-temp', function () {
 
+    $path = userfiles_path() . 'standalone-update';
+    if (!is_dir($path)) {
+        return false;
+    }
+    try {
+        $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \RecursiveDirectoryIterator::SKIP_DOTS), \RecursiveIteratorIterator::CHILD_FIRST);
+        foreach ($files as $fileinfo) {
+            $todo = ($fileinfo->isDir() ? 'rmdir' : 'unlink');
+            @$todo($fileinfo->getRealPath());
+        }
+        @rmdir($path);
+    } catch (\Exception $e) {
+        //
+    }
 });
 
 api_expose_admin('standalone-update-now', function () {

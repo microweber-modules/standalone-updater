@@ -21,6 +21,22 @@ if (version_compare($currentVersion, $latestVersionDetails['version']) >= 0) {
     }
 </style>
 
+<?php
+if (isset($_GET['delete_temp']) && $_GET['delete_temp']== 1):
+?>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $.ajax({
+            url: "<?php echo api_url(); ?>standalone-update-delete-temp",
+        }).done(function() {
+            // deleted
+        });
+    });
+</script>
+<?php
+endif;
+?>
+
 <div class="card style-1 m-3">
     <div class="card-header">
         <?php $module_info = module_info($params['module']); ?>
