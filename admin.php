@@ -75,29 +75,40 @@ if (version_compare($currentVersion, $latestVersionDetails['version']) >= 0) {
                         }
                         ?>
                     </div>
-                    <div class="mb-0 mt-4 mr-4">
+
+                    <script type="text/javascript">
+                        $(document).ready(function () {
+                            mw.options.form('.js-standalone-updater-settings', function () {
+                                mw.clear_cache();
+                                mw.notification.success("<?php _ejs("All changes are saved"); ?>.");
+                            });
+                        });
+                    </script>
+
+
+                    <div class="mb-0 mt-4 mr-4 js-standalone-updater-settings">
                         <a href="#" onClick="$('.js-advanced-settings').toggle();"><?php echo _e('Advanced settings');?></a>
                         <div class="js-advanced-settings" style="display:none">
                             <div class="d-flex justify-content-center">
                                 <div class="form-group mb-0 mr-4">
                                     <div class="input-group align-items-center">
                                         <label>  <?php echo _e('Max receive speed download (per second)');?></label>
-                                        <select name="max_receive_speed_download" class="ml-4 form-control">
-                                            <option value="0">Unlimited</option>
-                                            <option value="5">5MB/s</option>
-                                            <option value="2">2MB/s</option>
-                                            <option value="1">1MB/s</option>
+                                        <select name="max_receive_speed_download" class="ml-4 form-control mw_option_field" option-group="standalone_updater">
+                                            <option value="0" <?php if (get_option('max_receive_speed_download', 'standalone_updater') == '0'): ?> selected="selected" <?php endif;?>>Unlimited</option>
+                                            <option value="5" <?php if (get_option('max_receive_speed_download', 'standalone_updater') == '5'): ?> selected="selected" <?php endif;?>>5MB/s</option>
+                                            <option value="2" <?php if (get_option('max_receive_speed_download', 'standalone_updater') == '2'): ?> selected="selected" <?php endif;?>>2MB/s</option>
+                                            <option value="1" <?php if (get_option('max_receive_speed_download', 'standalone_updater') == '1'): ?> selected="selected" <?php endif;?>>1MB/s</option>
                                         </select>
                                     </div>
                                 </div>
                                 </div>
                                  <div class="d-flex justify-content-center">
-                                <div class="form-group mb-0 mr-4 mt-2"> 
+                                <div class="form-group mb-0 mr-4 mt-2">
                                     <div class="input-group align-items-center">
                                         <label>  <?php echo _e('Download method');?></label>
-                                        <select name="download_method" class="ml-4 form-control">
-                                            <option value="curl">CURL</option>
-                                            <option value="file_get_contents">File Get Contents</option>
+                                        <select name="download_method" class="ml-4 form-control mw_option_field" option-group="standalone_updater">
+                                            <option value="curl" <?php if (get_option('download_method', 'standalone_updater') == 'curl'): ?> selected="selected" <?php endif;?>>CURL</option>
+                                            <option value="file_get_contents" <?php if (get_option('download_method', 'standalone_updater') == 'file_get_contents'): ?> selected="selected" <?php endif;?>>File Get Contents</option>
                                         </select>
                                     </div>
                                 </div>
