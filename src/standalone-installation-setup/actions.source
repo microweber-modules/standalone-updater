@@ -51,10 +51,10 @@ class StandaloneUpdateExecutor
     }
 
     public function latestVersion() {
-        $updateApi = 'http://updater.microweberapi.com/microweber-master.zip';
-        $version = file_get_contents($updateApi);
-        $version = json_decode($version, true);
-        return $version;
+    
+       $latestMasterVersionZip = 'http://updater.microweberapi.com/microweber-master.zip';
+
+       return ['url'=>$latestMasterVersionZip];
     }
 
     public function latestDevVersion() {
