@@ -35,7 +35,8 @@ if (isset($_GET['delete_temp']) && $_GET['delete_temp']== 1):
             $.ajax({
                 url: "<?php echo api_url(); ?>standalone-update-delete-temp",
             }).done(function () {
-                // deleted
+                $.post( mw.settings.api_url + 'mw_post_update');
+                mw.notification.success("<?php _ejs("The DB was reloaded"); ?>.");
             }).fail(function (jqXHR, textStatus) {
                 delete_temp_standalone();
             });
