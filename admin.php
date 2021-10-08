@@ -4,8 +4,15 @@
 $currentVersion = MW_VERSION;
 $latestVersionDetails = latest_version();
 
-$isUpToDate = false;
+$canIUpdate = true;
+$canIUpdateMessage = '';
+$projectMainDir = dirname(dirname(dirname(__DIR__)));
+if (is_dir($projectMainDir . DS . '.git')) {
+    $canIUpdate = false;
+    $canIUpdateMessage = 'The git repository is recognized on your server.';
+}
 
+$isUpToDate = false;
 if (version_compare($currentVersion, $latestVersionDetails['version']) >= 0) {
     $isUpToDate = true;
 }
@@ -68,8 +75,11 @@ endif;
                     <p class="mb-0">and the latest version is <span class="font-weight-bold"><?php echo $latestVersionDetails['version']; ?></span></p>
                     &nbsp;released on <?php echo $latestVersionDetails['build_date']; ?>
                 <br><br>
-
                 </div>
+
+
+
+                <?php if ($canIUpdate) { ?>
                 <?php if ($isUpToDate) { ?>
                 <br> <br>
                 <h1 class="text-success"><i class="mw-standalone-icons mdi mdi-check-circle-outline"></i><h4><h5 class="text-success font-weight-bold">  You are up to date!</h5></h4>
@@ -155,6 +165,18 @@ endif;
                         </div>
                     </div>
                 </form>
+                <?php
+                } else {
+                ?>
+                    <br> <br>
+                    <h1 class="text-danger"><i class="mw-standalone-icons mdi mdi-close-circle-outline"></i></h1>
+                    <h5 class="text-danger font-weight-bold">The standalone update can't be run on this server.</h5>
+                    <b><?php echo $canIUpdateMessage; ?></b>
+                    <br/>
+                <?php
+                }
+                ?>
+
             </div>
         </div>
     </div>
