@@ -7,16 +7,18 @@ $latestVersionDetails = latest_version();
 $canIUpdate = true;
 $canIUpdateMessage = [];
 $projectMainDir = dirname(dirname(dirname(__DIR__)));
+
 if (is_dir($projectMainDir . DS . '.git')) {
     $canIUpdate = false;
     $canIUpdateMessages[] = 'The git repository is recognized on your server.';
 }
+
 if (app()->environment() == 'production') {
     $canIUpdate = false;
     $canIUpdateMessages[] = 'The app is on production environment.';
 }
-if (function_exists('disk_free_space')) {
 
+if (function_exists('disk_free_space')) {
     $bytes = disk_free_space("/");
     $si_prefix = array( 'B', 'KB', 'MB', 'GB', 'TB', 'EB', 'ZB', 'YB' );
     $base = 1024;
@@ -27,8 +29,6 @@ if (function_exists('disk_free_space')) {
         $canIUpdateMessages[] = 'The minimum required free disk space is 1GB, you have '.sprintf('%1.2f', $bytes / pow($base, $class)) . ' ' . $si_prefix[$class] . ' on your server.';
     }
 }
-
-
 
 $isUpToDate = false;
 if (version_compare($currentVersion, $latestVersionDetails['version']) >= 0) {
