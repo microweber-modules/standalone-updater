@@ -18,6 +18,26 @@ if (app()->environment() == 'production') {
     $canIUpdateMessages[] = 'The app is on production environment.';
 }
 
+if (!is_writable($projectMainDir . DS . 'src')) {
+    $canIUpdate = false;
+    $canIUpdateMessages[] = 'The src folder must be writable.';
+}
+
+if (!is_writable($projectMainDir . DS . 'userfiles')) {
+    $canIUpdate = false;
+    $canIUpdateMessages[] = 'The userfiles folder must be writable.';
+}
+
+if (!is_writable($projectMainDir . DS . 'storage')) {
+    $canIUpdate = false;
+    $canIUpdateMessages[] = 'The storage folder must be writable.';
+}
+
+if (!is_writable($projectMainDir . DS . 'vendor')) {
+    $canIUpdate = false;
+    $canIUpdateMessages[] = 'The vendor folder must be writable.';
+}
+
 if (function_exists('disk_free_space')) {
     $bytes = disk_free_space("/");
     $si_prefix = array( 'B', 'KB', 'MB', 'GB', 'TB', 'EB', 'ZB', 'YB' );
