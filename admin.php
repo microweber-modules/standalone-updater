@@ -5,11 +5,15 @@ $currentVersion = MW_VERSION;
 $latestVersionDetails = latest_version();
 
 $canIUpdate = true;
-$canIUpdateMessage = '';
+$canIUpdateMessage = [];
 $projectMainDir = dirname(dirname(dirname(__DIR__)));
 if (is_dir($projectMainDir . DS . '.git')) {
     $canIUpdate = false;
-    $canIUpdateMessage = 'The git repository is recognized on your server.';
+    $canIUpdateMessages[] = 'The git repository is recognized on your server.';
+}
+if (app()->environment() == 'production') {
+    $canIUpdate = false;
+    $canIUpdateMessages[] = 'The app is on production environment.';
 }
 
 $isUpToDate = false;
@@ -170,8 +174,16 @@ endif;
                 ?>
                     <br> <br>
                     <h1 class="text-danger"><i class="mw-standalone-icons mdi mdi-close-circle-outline"></i></h1>
-                    <h5 class="text-danger font-weight-bold">The standalone update can't be run on this server.</h5>
-                    <b><?php echo $canIUpdateMessage; ?></b>
+                    <h5 class="text-danger font-weight-bold">The standalone update can't be run on this server because:</h5>
+                    <ol>
+                        <?php
+                        foreach($canIUpdateMessages as $message):
+                        ?>
+                        <li style="font-weight: bold"><?php echo $message; ?></li>
+                        <?php
+                        endforeach;
+                        ?>
+                    </ol>
                     <br/>
                 <?php
                 }
