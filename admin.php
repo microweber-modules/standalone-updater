@@ -15,6 +15,20 @@ if (app()->environment() == 'production') {
     $canIUpdate = false;
     $canIUpdateMessages[] = 'The app is on production environment.';
 }
+if (function_exists('disk_free_space')) {
+
+    $bytes = disk_free_space("/");
+    $si_prefix = array( 'B', 'KB', 'MB', 'GB', 'TB', 'EB', 'ZB', 'YB' );
+    $base = 1024;
+    $class = min((int)log($bytes , $base) , count($si_prefix) - 1);
+
+    if (($bytes / pow($base, $class)) < 1) {
+        $canIUpdate = false;
+        $canIUpdateMessages[] = 'The minimum required free disk space is 1GB, you have '.sprintf('%1.2f', $bytes / pow($base, $class)) . ' ' . $si_prefix[$class] . ' on your server.';
+    }
+}
+
+
 
 $isUpToDate = false;
 if (version_compare($currentVersion, $latestVersionDetails['version']) >= 0) {
