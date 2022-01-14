@@ -51,7 +51,7 @@ class StandaloneUpdateExecutor
     }
 
     public function latestVersion() {
-    
+
        $latestMasterVersionZip = 'http://updater.microweberapi.com/microweber-master.zip';
 
        return ['url'=>$latestMasterVersionZip];
@@ -197,7 +197,11 @@ class StandaloneUpdateReplacer
     public function start()
     {
         $this->deleteDirectoryRecursive($this->microweberPath . 'vendor');
-        $this->deleteDirectoryRecursive($this->microweberPath . 'bootstrap'.DIRECTORY_SEPARATOR.'cache');
+        $this->deleteDirectoryRecursive($this->microweberPath . 'bootstrap ' . DIRECTORY_SEPARATOR . 'cache');
+        $this->deleteDirectoryRecursive($this->microweberPath . 'storage' . DIRECTORY_SEPARATOR . 'framework' . DIRECTORY_SEPARATOR . 'cache');
+        $this->deleteDirectoryRecursive($this->microweberPath . 'storage' . DIRECTORY_SEPARATOR . 'framework' . DIRECTORY_SEPARATOR . 'views');
+        $this->deleteDirectoryRecursive($this->microweberPath . 'userfiles' . DIRECTORY_SEPARATOR . 'cache');
+        $this->deleteDirectoryRecursive($this->microweberPath . 'userfiles' . DIRECTORY_SEPARATOR . 'css' . DIRECTORY_SEPARATOR . 'admin-css');
 
         $newFilesForCopy = [];
         $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath( $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'userfiles'.DIRECTORY_SEPARATOR.'templates'));
