@@ -43,6 +43,9 @@ api_expose_admin('standalone-update-now', function () {
     delete_recursive(userfiles_path() . 'standalone-update');
     mkdir_recursive($updateCacheDir);
 
+    $bootstrap_cached_folder = normalize_path(base_path('bootstrap/cache/'),true);
+    delete_recursive($bootstrap_cached_folder);
+
     $redirectLink = site_url() . 'userfiles/' . $updateCacheFolderName . 'index.php?installVersion='.$installVersion;
 
     // copy(  dirname(__DIR__) . '/mw-black-logo.png', $updateCacheDir . DS . 'mw-black-logo.png');
