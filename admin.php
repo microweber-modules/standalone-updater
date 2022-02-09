@@ -2,7 +2,7 @@
 
 <?php
 $currentVersion = MW_VERSION;
-$latestVersionDetails = latest_version();
+$latestVersionDetails = mw_stand_alone_updater_get_latest_version();
 
 $canIUpdate = true;
 $canIUpdateMessage = [];
@@ -80,8 +80,8 @@ if (isset($_GET['delete_temp']) && $_GET['delete_temp']== 1):
             $.ajax({
                 url: "<?php echo api_url(); ?>standalone-update-delete-temp",
             }).done(function () {
-                $.post( mw.settings.api_url + 'mw_post_update');
-                mw.notification.success("<?php _ejs("The DB was reloaded"); ?>.");
+
+                mw.notification.success("<?php _ejs("Update complete"); ?>.");
             }).fail(function (jqXHR, textStatus) {
                 delete_temp_standalone();
             });

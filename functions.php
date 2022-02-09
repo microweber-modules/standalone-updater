@@ -1,7 +1,7 @@
 <?php
 autoload_add_namespace(__DIR__ . '/src/', 'MicroweberPackages\\StandaloneUpdater\\');
 
-function latest_version() {
+function mw_stand_alone_updater_get_latest_version() {
 
     $updateApi = 'https://update.microweberapi.com/?api_function=get_download_link&get_last_version=1';
     $version = app()->url_manager->download($updateApi);
@@ -10,7 +10,7 @@ function latest_version() {
     return $version;
 }
 
-function delete_recursive($dir)
+function mw_stand_alone_updater_delete_recursive($dir)
 {
     if (!is_dir($dir)) {
         return;
