@@ -8,7 +8,7 @@ $config['ui_admin'] = true;
 $config['is_system'] = true;
 $config['categories'] = "other";
 $config['position'] = 1;
-$config['version'] = 2.8;
+$config['version'] = 2.9;
 
 $config['settings']['service_provider'] = [
     \MicroweberPackages\StandaloneUpdater\StandaloneUpdaterServiceProvider::class
