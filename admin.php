@@ -13,11 +13,13 @@ if (is_dir($projectMainDir . DS . '.git')) {
     $canIUpdateMessages[] = 'The git repository is recognized on your server.';
 }
 
+/*
 if (app()->environment() == 'production') {
     $canIUpdate = false;
     $canIUpdateMessages[] = 'The app is on production environment.';
 }
-
+*/
+    
 if (!is_writable($projectMainDir . DS . 'src')) {
     $canIUpdate = false;
     $canIUpdateMessages[] = 'The src folder must be writable.';
