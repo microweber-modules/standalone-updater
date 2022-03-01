@@ -89,12 +89,12 @@ class StandaloneUpdateExecutor
             $this->log('The '.$version.' version of system is download successfully!');
         }
 
-        $this->log('Unzipping the files...');
+        $this->log('Unzipping new version...');
 
         $unzip = new Unzip();
         $unzip->extract(__DIR__ . DIRECTORY_SEPARATOR . $zipFile, __DIR__ . DIRECTORY_SEPARATOR . 'mw-app-unziped/', true);
 
-        $this->log('Replacing the new files...');
+        $this->log('Replacing with the new files...');
 
         $replace = new StandaloneUpdateReplacer();
         $replace->start();
