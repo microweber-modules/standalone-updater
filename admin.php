@@ -19,7 +19,7 @@ if (app()->environment() == 'production') {
     $canIUpdateMessages[] = 'The app is on production environment.';
 }
 */
-    
+
 if (!is_writable($projectMainDir . DS . 'src')) {
     $canIUpdate = false;
     $canIUpdateMessages[] = 'The src folder must be writable.';
@@ -41,7 +41,7 @@ if (!is_writable($projectMainDir . DS . 'vendor')) {
 }
 
 if (function_exists('disk_free_space')) {
-    $bytes = disk_free_space("/");
+    $bytes = disk_free_space($projectMainDir);
     $si_prefix = array( 'B', 'KB', 'MB', 'GB', 'TB', 'EB', 'ZB', 'YB' );
     $base = 1024;
     $class = min((int)log($bytes , $base) , count($si_prefix) - 1);
