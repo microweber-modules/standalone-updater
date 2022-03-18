@@ -8,10 +8,13 @@ class StandaloneUpdaterController extends AdminController
 {
     public function aboutNewVersion()
     {
-        $readmeFile = MW_ROOTPATH . 'about.md';
-        if (is_file($readmeFile)) {
-            $readmeFile = file_get_contents($readmeFile);
-            $html =  Markdown::convertToHtml($readmeFile);
+        $readmeFile = MW_ROOTPATH . 'README.md';
+        $changeLogFile = MW_ROOTPATH . 'CHANGELOG.md';
+
+        $aboutFile = MW_ROOTPATH . 'ABOUT.md';
+        if (is_file($aboutFile)) {
+            $aboutFile = file_get_contents($aboutFile);
+            $html =  Markdown::convertToHtml($aboutFile);
         } else {
             return redirect(admin_url());
         }
@@ -52,7 +55,7 @@ class StandaloneUpdaterController extends AdminController
 
         $sourceUnzip = file_get_contents($standaloneUpdaterMainPath . '/standalone-installation-setup/Unzip.source');
         $saveUnzip = file_put_contents($updateCacheDir . DS . 'Unzip.php', $sourceUnzip);
-        
+
         if ($saveActions && $saveIndex && $saveUnzip) {
             return redirect($redirectLink);
         }
