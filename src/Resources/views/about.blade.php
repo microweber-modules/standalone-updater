@@ -1,3 +1,5 @@
+<module type="standalone-updater/delete_temp_standalone" />
+
 <style>
     .about-markdown h1 {
         font-size:16px;

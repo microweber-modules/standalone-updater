@@ -62,38 +62,13 @@ if (version_compare($currentVersion, $latestVersionDetails['version']) >= 0) {
     <module type="admin/modules/info"/>
 <?php endif; ?>
 
+<module type="standalone-updater/delete_temp_standalone" />
+
 <style>
     .mw-standalone-icons {
         font-size: 50px;
     }
 </style>
-
-<?php
-if (isset($_GET['delete_temp']) && $_GET['delete_temp']== 1):
-?>
-<script type="text/javascript">
-    $(document).ready(function () {
-        retryDeleteTemp = 0;
-        function delete_temp_standalone() {
-            retryDeleteTemp = (retryDeleteTemp + 1);
-            if (retryDeleteTemp > 4) {
-                return false;
-            }
-            $.ajax({
-                url: "<?php route('api.standalone-updater.delete-temp'); ?>",
-            }).done(function () {
-
-                mw.notification.success("<?php _ejs("Update complete"); ?>.");
-            }).fail(function (jqXHR, textStatus) {
-                delete_temp_standalone();
-            });
-        }
-        delete_temp_standalone();
-    });
-</script>
-<?php
-endif;
-?>
 
 <div class="card style-1 m-3">
     <div class="card-header">
