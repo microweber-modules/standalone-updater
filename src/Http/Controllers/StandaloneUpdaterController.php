@@ -8,12 +8,12 @@ class StandaloneUpdaterController extends AdminController
 {
     public function aboutNewVersion()
     {
-        $html = '';
-
         $readmeFile = MW_ROOTPATH . 'about.md';
-        if(is_file($readmeFile)) {
+        if (is_file($readmeFile)) {
             $readmeFile = file_get_contents($readmeFile);
             $html =  Markdown::convertToHtml($readmeFile);
+        } else {
+            return redirect(admin_url());
         }
 
         return $this->view('standalone-updater::about', ['about'=>$html]);
