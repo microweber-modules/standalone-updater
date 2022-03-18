@@ -33,9 +33,12 @@ function mw_standalone_updater_delete_recursive($dir)
 }
 
 event_bind('mw.admin', function ($params = false) {
-
     // Show new update on dashboard
-    $lastUpdateCheckTime = get_option('last_update_check_time','standalone-updater');
+    $lastUpdateCheckTime = get_option('last_update_check_time2','standalone-updater');
+    if (!$lastUpdateCheckTime) {
+        $lastUpdateCheckTime = \Carbon\Carbon::now();
+    }
+    
     $showDashboardNotice =\Carbon\Carbon::now()->greaterThan(\Carbon\Carbon::parse($lastUpdateCheckTime));
     if ($showDashboardNotice) {
 
