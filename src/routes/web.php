@@ -24,7 +24,7 @@ Route::name('api.standalone-updater.')
     ->group(function () {
 
         Route::get('delete-temp', 'StandaloneUpdaterController@deleteTemp')->name('delete-temp');
-        Route::get('update-now', 'StandaloneUpdaterController@updateNow')->name('update-now');
+        Route::post('update-now', 'StandaloneUpdaterController@updateNow')->name('update-now');
 
         Route::get('remove-dashboard-notice', function () {
             return save_option( 'last_update_check_time',\Carbon\Carbon::parse('+24 hours'),'standalone-updater');
