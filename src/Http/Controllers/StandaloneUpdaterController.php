@@ -16,7 +16,7 @@ class StandaloneUpdaterController extends AdminController
             $aboutFile = file_get_contents($aboutFile);
             $html =  Markdown::convertToHtml($aboutFile);
         } else {
-            return redirect(admin_url());
+            return redirect(module_admin_url('standalone-updater'));
         }
 
         return $this->view('standalone-updater::about', ['about'=>$html]);
