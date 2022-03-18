@@ -2,7 +2,7 @@
 
 <?php
 $currentVersion = MW_VERSION;
-$latestVersionDetails = mw_stand_alone_updater_get_latest_version();
+$latestVersionDetails = mw_standalone_updater_get_latest_version();
 
 $canIUpdate = true;
 $canIUpdateMessage = [];

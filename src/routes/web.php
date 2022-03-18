@@ -40,11 +40,11 @@ api_expose_admin('standalone-update-now', function () {
     $updateCacheFolderName = 'standalone-update'. DS. rand(222,444) . time(). DS ;
     $updateCacheDir = userfiles_path() . $updateCacheFolderName;
 
-    mw_stand_alone_updater_delete_recursive(userfiles_path() . 'standalone-update');
+    mw_standalone_updater_delete_recursive(userfiles_path() . 'standalone-update');
     mkdir_recursive($updateCacheDir);
 
     $bootstrap_cached_folder = normalize_path(base_path('bootstrap/cache/'),true);
-    mw_stand_alone_updater_delete_recursive($bootstrap_cached_folder);
+    mw_standalone_updater_delete_recursive($bootstrap_cached_folder);
 
     $redirectLink = site_url() . 'userfiles/' . $updateCacheFolderName . 'index.php?installVersion='.$installVersion;
 
