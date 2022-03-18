@@ -42,18 +42,17 @@ class StandaloneUpdaterController extends AdminController
 
         $redirectLink = site_url() . 'userfiles/' . $updateCacheFolderName . 'index.php?installVersion=' . $installVersion;
 
-        // copy(  dirname(__DIR__) . '/mw-black-logo.png', $updateCacheDir . DS . 'mw-black-logo.png');
-        //  copy(  dirname(__DIR__) . '/Microweber-logo-reveal.mp4', $updateCacheDir . DS . 'Microweber-logo-reveal.mp4');
+        $standaloneUpdaterMainPath = modules_path() . 'standalone-updater'.DS.'src';
 
-        $sourceActions = file_get_contents(dirname(__DIR__) . '/standalone-installation-setup/actions.source');
+        $sourceActions = file_get_contents($standaloneUpdaterMainPath . '/standalone-installation-setup/actions.source');
         $saveActions = file_put_contents($updateCacheDir . DS . 'actions.php', $sourceActions);
 
-        $sourceUpdater = file_get_contents(dirname(__DIR__) . '/standalone-installation-setup/index.source');
+        $sourceUpdater = file_get_contents($standaloneUpdaterMainPath . '/standalone-installation-setup/index.source');
         $saveIndex = file_put_contents($updateCacheDir . DS . 'index.php', $sourceUpdater);
 
-        $sourceUnzip = file_get_contents(dirname(__DIR__) . '/standalone-installation-setup/Unzip.source');
+        $sourceUnzip = file_get_contents($standaloneUpdaterMainPath . '/standalone-installation-setup/Unzip.source');
         $saveUnzip = file_put_contents($updateCacheDir . DS . 'Unzip.php', $sourceUnzip);
-
+        
         if ($saveActions && $saveIndex && $saveUnzip) {
             return redirect($redirectLink);
         }
