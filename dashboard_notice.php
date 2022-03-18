@@ -3,6 +3,14 @@
     function standaloneUpdaterDashboardNoticeDissmiss()
     {
         $('.js-standalone-updater-dashboard-notice').slideUp().remove();
+        $.ajax({
+            url: "<?php echo route('api.standalone-updater.remove-dashboard-notice'); ?>",
+            method: "GET",
+            success: function (response) {
+            },
+            error: function () {
+            }
+        });
     }
 </script>
 
@@ -13,6 +21,7 @@
         <p class="card-text">There is a new version (<?php echo $params['new-version']; ?>) available, do you want to update now?</p>
 
         <br />
+
         <a href="#" onclick="standaloneUpdaterDashboardNoticeDissmiss()" class="btn btn-outline-primary">Later</a>
         <a href="' . module_admin_url('standalone-updater') . '" class="btn btn-outline-primary">Update now</a>
     </div>

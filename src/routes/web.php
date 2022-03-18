@@ -7,62 +7,76 @@
     })->name('module.standalone-updater.update');
 });*/
 
-api_expose_admin('standalone-update-delete-temp', function () {
 
-    $path = userfiles_path() . 'standalone-update';
-    if (!is_dir($path)) {
-        return false;
-    }
-    try {
-        $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \RecursiveDirectoryIterator::SKIP_DOTS), \RecursiveIteratorIterator::CHILD_FIRST);
-        foreach ($files as $fileinfo) {
-            $todo = ($fileinfo->isDir() ? 'rmdir' : 'unlink');
-            @$todo($fileinfo->getRealPath());
-        }
-        @rmdir($path);
-    } catch (\Exception $e) {
-        //
-    }
-});
+Route::name('api.standalone-updater.')
+    ->prefix('api/standalone-updater')
+    ->middleware(['api', 'admin'])
+    ->group(function () {
 
-api_expose_admin('standalone-update-now', function () {
+        Route::get('delete-temp', function () {
 
-    $installVersion = 'latest';
-    if (isset($_POST['version']) && $_POST['version'] == 'dev') {
-        $installVersion = 'dev';
-    }
+            $path = userfiles_path() . 'standalone-update';
+            if (!is_dir($path)) {
+                return false;
+            }
+            try {
+                $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \RecursiveDirectoryIterator::SKIP_DOTS), \RecursiveIteratorIterator::CHILD_FIRST);
+                foreach ($files as $fileinfo) {
+                    $todo = ($fileinfo->isDir() ? 'rmdir' : 'unlink');
+                    @$todo($fileinfo->getRealPath());
+                }
+                @rmdir($path);
+            } catch (\Exception $e) {
+                //
+            }
+        })->name('delete-temp');
 
-    setcookie('max_receive_speed_download', get_option('max_receive_speed_download', 'standalone_updater'), time() + (1800 * 5), "/");
-    setcookie('admin_url', admin_url('view:modules/load_module:standalone-updater?delete_temp=1'), time() + (1800 * 5), "/");
-    setcookie('site_url', site_url(), time() + (1800 * 5), "/");
-    setcookie('install_session_id', false, time() - (1800 * 5), "/");
+        Route::get('update-now', function () {
 
-    $updateCacheFolderName = 'standalone-update'. DS. rand(222,444) . time(). DS ;
-    $updateCacheDir = userfiles_path() . $updateCacheFolderName;
+            $installVersion = 'latest';
+            if (isset($_POST['version']) && $_POST['version'] == 'dev') {
+                $installVersion = 'dev';
+            }
 
-    mw_standalone_updater_delete_recursive(userfiles_path() . 'standalone-update');
-    mkdir_recursive($updateCacheDir);
+            setcookie('max_receive_speed_download', get_option('max_receive_speed_download', 'standalone_updater'), time() + (1800 * 5), "/");
+            setcookie('admin_url', admin_url('view:modules/load_module:standalone-updater?delete_temp=1'), time() + (1800 * 5), "/");
+            setcookie('site_url', site_url(), time() + (1800 * 5), "/");
+            setcookie('install_session_id', false, time() - (1800 * 5), "/");
 
-    $bootstrap_cached_folder = normalize_path(base_path('bootstrap/cache/'),true);
-    mw_standalone_updater_delete_recursive($bootstrap_cached_folder);
+            $updateCacheFolderName = 'standalone-update' . DS . rand(222, 444) . time() . DS;
+            $updateCacheDir = userfiles_path() . $updateCacheFolderName;
 
-    $redirectLink = site_url() . 'userfiles/' . $updateCacheFolderName . 'index.php?installVersion='.$installVersion;
+            mw_standalone_updater_delete_recursive(userfiles_path() . 'standalone-update');
+            mkdir_recursive($updateCacheDir);
 
-    // copy(  dirname(__DIR__) . '/mw-black-logo.png', $updateCacheDir . DS . 'mw-black-logo.png');
-   //  copy(  dirname(__DIR__) . '/Microweber-logo-reveal.mp4', $updateCacheDir . DS . 'Microweber-logo-reveal.mp4');
+            $bootstrap_cached_folder = normalize_path(base_path('bootstrap/cache/'), true);
+            mw_standalone_updater_delete_recursive($bootstrap_cached_folder);
 
-    $sourceActions = file_get_contents(dirname(__DIR__) .'/standalone-installation-setup/actions.source');
-    $saveActions = file_put_contents($updateCacheDir . DS . 'actions.php', $sourceActions);
+            $redirectLink = site_url() . 'userfiles/' . $updateCacheFolderName . 'index.php?installVersion=' . $installVersion;
 
-    $sourceUpdater = file_get_contents(dirname(__DIR__) .'/standalone-installation-setup/index.source');
-    $saveIndex = file_put_contents($updateCacheDir . DS . 'index.php', $sourceUpdater);
+            // copy(  dirname(__DIR__) . '/mw-black-logo.png', $updateCacheDir . DS . 'mw-black-logo.png');
+            //  copy(  dirname(__DIR__) . '/Microweber-logo-reveal.mp4', $updateCacheDir . DS . 'Microweber-logo-reveal.mp4');
 
-    $sourceUnzip = file_get_contents(dirname(__DIR__) .'/standalone-installation-setup/Unzip.source');
-    $saveUnzip = file_put_contents($updateCacheDir . DS . 'Unzip.php', $sourceUnzip);
+            $sourceActions = file_get_contents(dirname(__DIR__) . '/standalone-installation-setup/actions.source');
+            $saveActions = file_put_contents($updateCacheDir . DS . 'actions.php', $sourceActions);
 
-    if ($saveActions && $saveIndex && $saveUnzip) {
-        return redirect($redirectLink);
-    }
+            $sourceUpdater = file_get_contents(dirname(__DIR__) . '/standalone-installation-setup/index.source');
+            $saveIndex = file_put_contents($updateCacheDir . DS . 'index.php', $sourceUpdater);
 
-    return redirect(admin_url('view:modules/load_module:standalone-updater?message=Cant create update file.'));
-});
+            $sourceUnzip = file_get_contents(dirname(__DIR__) . '/standalone-installation-setup/Unzip.source');
+            $saveUnzip = file_put_contents($updateCacheDir . DS . 'Unzip.php', $sourceUnzip);
+
+            if ($saveActions && $saveIndex && $saveUnzip) {
+                return redirect($redirectLink);
+            }
+
+            return redirect(admin_url('view:modules/load_module:standalone-updater?message=Cant create update file.'));
+        })->name('update-now');
+
+
+        Route::get('remove-dashboard-notice', function () {
+            return save_option( 'last_update_check_time',\Carbon\Carbon::parse('+24 hours'),'standalone-updater');
+        })->name('remove-dashboard-notice');
+
+
+    });
