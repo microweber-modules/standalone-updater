@@ -11,7 +11,7 @@
                     return false;
                 }
                 $.ajax({
-                    url: "<?php route('api.standalone-updater.delete-temp'); ?>",
+                    url: "<?php echo route('api.standalone-updater.delete-temp'); ?>",
                 }).done(function () {
 
                     mw.notification.success("<?php _ejs("Update complete"); ?>.");

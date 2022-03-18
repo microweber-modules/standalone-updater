@@ -105,7 +105,7 @@ if (version_compare($currentVersion, $latestVersionDetails['version']) >= 0) {
                     <?php } ?>
                 <br><br>
 
-                <form method="post" action="<?php route('api.standalone-updater.update-now'); ?>">
+                <form method="post" action="<?php echo route('api.standalone-updater.update-now'); ?>">
                     <div class="d-flex justify-content-center">
                         <div class="form-group mb-0 mr-4">
                             <div class="input-group align-items-center">
