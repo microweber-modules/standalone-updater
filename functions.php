@@ -38,7 +38,7 @@ event_bind('mw.admin', function ($params = false) {
     if (!$lastUpdateCheckTime) {
         $lastUpdateCheckTime = \Carbon\Carbon::now();
     }
-    
+
     $showDashboardNotice =\Carbon\Carbon::now()->greaterThan(\Carbon\Carbon::parse($lastUpdateCheckTime));
     if ($showDashboardNotice) {
 
@@ -56,7 +56,7 @@ event_bind('mw.admin', function ($params = false) {
         }
 
         if ($mustUpdate) {
-            event_bind('mw.admin.dashboard.content', function ($item) use ($newVersionNumber) {
+            event_bind('mw.admin.dashboard.start', function ($item) use ($newVersionNumber) {
                echo '<div type="standalone-updater/dashboard_notice" new-version="'.$newVersionNumber.'" class="mw-lazy-load-module"></div>';
             });
         }

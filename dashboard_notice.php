@@ -2,7 +2,7 @@
 <script>
     function standaloneUpdaterDashboardNoticeDissmiss()
     {
-        $('.js-standalone-updater-dashboard-notice').slideUp().remove();
+        $('.js-standalone-updater-dashboard-notice').slideUp();
         $.ajax({
             url: "<?php echo route('api.standalone-updater.remove-dashboard-notice'); ?>",
             method: "GET",
@@ -23,6 +23,6 @@
         <br />
 
         <a href="#" onclick="standaloneUpdaterDashboardNoticeDissmiss()" class="btn btn-outline-primary">Later</a>
-        <a href="' . module_admin_url('standalone-updater') . '" class="btn btn-outline-primary">Update now</a>
+        <a href="<?php echo module_admin_url('standalone-updater'); ?>" class="btn btn-outline-primary">Update now</a>
     </div>
 </div>
