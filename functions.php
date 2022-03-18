@@ -2,7 +2,7 @@
 
 use Composer\Semver\Comparator;
 
-autoload_add_namespace(__DIR__ . '/src/', 'MicroweberPackages\\StandaloneUpdater\\');
+autoload_add_namespace(__DIR__ . '/src/', 'MicroweberPackages\\Modules\\StandaloneUpdater\\');
 
 function mw_standalone_updater_get_latest_version() {
 

@@ -11,5 +11,5 @@ $config['position'] = 1;
 $config['version'] = 3.0;
 
 $config['settings']['service_provider'] = [
-    \MicroweberPackages\StandaloneUpdater\StandaloneUpdaterServiceProvider::class
+    \MicroweberPackages\Modules\StandaloneUpdater\StandaloneUpdaterServiceProvider::class
 ];

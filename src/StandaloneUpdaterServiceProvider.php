@@ -9,8 +9,9 @@
  *
  */
 
-namespace MicroweberPackages\StandaloneUpdater;
+namespace MicroweberPackages\Modules\StandaloneUpdater;
 
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class StandaloneUpdaterServiceProvider extends ServiceProvider
@@ -22,6 +23,8 @@ class StandaloneUpdaterServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        View::addNamespace('standalone-updater', __DIR__ . '/resources/views');
+
         $this->loadRoutesFrom(__DIR__ . '/routes/web.php');
     }
 }
