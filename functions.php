@@ -32,27 +32,31 @@ function mw_standalone_updater_delete_recursive($dir)
     @rmdir($dir);
 }
 
-// Show new update on dashboard
-$lastUpdateCheckTime = get_option('last_update_check_time','standalone-updater');
-$showDashboardNotice =\Carbon\Carbon::now()->greaterThan(\Carbon\Carbon::parse($lastUpdateCheckTime));
-if ($showDashboardNotice) {
+event_bind('mw.admin', function ($params = false) {
 
-    $latestVersionDetails = mw_standalone_updater_get_latest_version();
-    $newVersionNumber = $latestVersionDetails['version'];
+    // Show new update on dashboard
+    $lastUpdateCheckTime = get_option('last_update_check_time','standalone-updater');
+    $showDashboardNotice =\Carbon\Carbon::now()->greaterThan(\Carbon\Carbon::parse($lastUpdateCheckTime));
+    if ($showDashboardNotice) {
 
-    if (Comparator::equalTo($newVersionNumber, MW_VERSION)) {
-        save_option( 'last_update_check_time',\Carbon\Carbon::parse('+24 hours'),'standalone-updater');
-        return;
+        $latestVersionDetails = mw_standalone_updater_get_latest_version();
+        $newVersionNumber = $latestVersionDetails['version'];
+
+        if (Comparator::equalTo($newVersionNumber, MW_VERSION)) {
+            save_option( 'last_update_check_time',\Carbon\Carbon::parse('+24 hours'),'standalone-updater');
+            return;
+        }
+
+        $mustUpdate = false;
+        if (Comparator::greaterThan($newVersionNumber, MW_VERSION)) {
+            $mustUpdate = true;
+        }
+
+        if ($mustUpdate) {
+            event_bind('mw.admin.dashboard.content', function ($item) use ($newVersionNumber) {
+               echo '<div type="standalone-updater/dashboard_notice" new-version="'.$newVersionNumber.'" class="mw-lazy-load-module"></div>';
+            });
+        }
     }
 
-    $mustUpdate = false;
-    if (Comparator::greaterThan($newVersionNumber, MW_VERSION)) {
-        $mustUpdate = true;
-    }
-
-    if ($mustUpdate) {
-        event_bind('mw.admin.dashboard.content', function ($item) use ($newVersionNumber) {
-           echo '<div type="standalone-updater/dashboard_notice" new-version="'.$newVersionNumber.'" class="mw-lazy-load-module"></div>';
-        });
-    }
-}
+});
