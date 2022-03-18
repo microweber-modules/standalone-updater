@@ -1,13 +1,20 @@
 <?php
 namespace MicroweberPackages\Modules\StandaloneUpdater\Http\Controllers;
 
+use GrahamCampbell\Markdown\Facades\Markdown;
 use MicroweberPackages\App\Http\Controllers\AdminController;
 
 class StandaloneUpdaterController extends AdminController
 {
     public function aboutNewVersion()
     {
-        $html = '<h1>test</h1>';
+        $html = '';
+
+        $readmeFile = MW_ROOTPATH . 'about.md';
+        if(is_file($readmeFile)) {
+            $readmeFile = file_get_contents($readmeFile);
+            $html =  Markdown::convertToHtml($readmeFile);
+        }
 
         return $this->view('standalone-updater::about', ['about'=>$html]);
     }
