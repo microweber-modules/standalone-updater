@@ -80,7 +80,7 @@ if (isset($_GET['delete_temp']) && $_GET['delete_temp']== 1):
                 return false;
             }
             $.ajax({
-                url: "<?php echo api_url(); ?>standalone-update-delete-temp",
+                url: "<?php route('api.standalone-updater.delete-temp'); ?>",
             }).done(function () {
 
                 mw.notification.success("<?php _ejs("Update complete"); ?>.");
@@ -130,7 +130,7 @@ endif;
                     <?php } ?>
                 <br><br>
 
-                <form method="post" action="<?php echo site_url('api/standalone-update-now'); ?>">
+                <form method="post" action="<?php route('api.standalone-updater.update-now'); ?>">
                     <div class="d-flex justify-content-center">
                         <div class="form-group mb-0 mr-4">
                             <div class="input-group align-items-center">
