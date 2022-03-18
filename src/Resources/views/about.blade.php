@@ -16,6 +16,8 @@
         background:#4592ff;
         color:#fff;
         margin-bottom: 20px;
+        background:url('{{module_url('standalone-updater')}}images/features_compressed.jpg');
+        background-position: center;
     }
     .about-new-version-block h1 {
         font-size:38px;
@@ -24,7 +26,7 @@
         font-size:20px;
     }
 </style>
-<div class="container p-5">
+<div class="container pl-5 pr-5">
 
     <div class="about-new-version-block">
         <h1>Microweber {{MW_VERSION}}</h1>
