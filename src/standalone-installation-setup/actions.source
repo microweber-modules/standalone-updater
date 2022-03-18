@@ -213,6 +213,10 @@ class StandaloneUpdateReplacer
         $newFilesForCopy[] = ['realPath'=>$this->newMicroweberPath . DIRECTORY_SEPARATOR . 'composer.lock','targetPath'=>'composer.lock'];
         $newFilesForCopy[] = ['realPath'=>$this->newMicroweberPath . DIRECTORY_SEPARATOR . 'composer.json','targetPath'=>'composer.json'];
 
+        $newFilesForCopy[] = ['realPath'=>$this->newMicroweberPath . DIRECTORY_SEPARATOR . 'ABOUT.md','targetPath'=>'ABOUT.md'];
+        $newFilesForCopy[] = ['realPath'=>$this->newMicroweberPath . DIRECTORY_SEPARATOR . 'README.md','targetPath'=>'README.md'];
+        $newFilesForCopy[] = ['realPath'=>$this->newMicroweberPath . DIRECTORY_SEPARATOR . 'CHANGELOG.md','targetPath'=>'CHANGELOG.md'];
+
         foreach($newFilesForCopy as $newFile) {
 
             $newFileFolder = dirname($this->microweberPath . $newFile['targetPath']);
