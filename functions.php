@@ -6,11 +6,13 @@ autoload_add_namespace(__DIR__ . '/src/', 'MicroweberPackages\\Modules\\Standalo
 
 function mw_standalone_updater_get_latest_version() {
 
-    $updateApi = 'https://update.microweberapi.com/?api_function=get_download_link&get_last_version=1';
-    $version = app()->url_manager->download($updateApi);
+     return cache()->remember('standalone_updater_latest_version', 1440, function () {
+        $updateApi = 'https://update.microweberapi.com/?api_function=get_download_link&get_last_version=1';
+        $version = app()->url_manager->download($updateApi);
 
-    $version = json_decode($version, true);
-    return $version;
+        $version = json_decode($version, true);
+        return $version;
+     });
 }
 
 function mw_standalone_updater_delete_recursive($dir)
