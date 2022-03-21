@@ -30,7 +30,13 @@ class StandaloneUpdaterController extends AdminController
         }
 
         setcookie('max_receive_speed_download', get_option('max_receive_speed_download', 'standalone_updater'), time() + (1800 * 5), "/");
-        setcookie('admin_url', route('standalone-updater.about-new-version') . '?delete_temp=1', time() + (1800 * 5), "/");
+        
+        if (mw()->ui->disable_marketplace != true) {
+            setcookie('admin_url', route('standalone-updater.about-new-version') . '?delete_temp=1', time() + (1800 * 5), "/");
+        } else {
+            setcookie('admin_url', module_admin_url('standalone-updater') . '?delete_temp=1', time() + (1800 * 5), "/");
+        }
+
         setcookie('site_url', site_url(), time() + (1800 * 5), "/");
         setcookie('install_session_id', false, time() - (1800 * 5), "/");
 

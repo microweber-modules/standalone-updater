@@ -33,34 +33,36 @@ function mw_standalone_updater_delete_recursive($dir)
     @rmdir($dir);
 }
 
-event_bind('mw.admin', function ($params = false) {
+if (mw()->ui->disable_marketplace != true) {
+    event_bind('mw.admin', function ($params = false) {
 
-    // Show new update on dashboard
-    $lastUpdateCheckTime = get_option('last_update_check_time','standalone-updater');
-    if (!$lastUpdateCheckTime) {
-        $lastUpdateCheckTime = \Carbon\Carbon::now();
-    }
-
-    $showDashboardNotice =\Carbon\Carbon::now()->greaterThan(\Carbon\Carbon::parse($lastUpdateCheckTime));
-    if ($showDashboardNotice) {
-
-        $latestVersionDetails = mw_standalone_updater_get_latest_version();
-        $newVersionNumber = $latestVersionDetails['version'];
-
-        if (Comparator::equalTo($newVersionNumber, MW_VERSION)) {
-            save_option( 'last_update_check_time',\Carbon\Carbon::parse('+24 hours'),'standalone-updater');
-            return;
+        // Show new update on dashboard
+        $lastUpdateCheckTime = get_option('last_update_check_time','standalone-updater');
+        if (!$lastUpdateCheckTime) {
+            $lastUpdateCheckTime = \Carbon\Carbon::now();
         }
 
-        $mustUpdate = false;
-        if (Comparator::greaterThan($newVersionNumber, MW_VERSION)) {
-            $mustUpdate = true;
-        }
+        $showDashboardNotice =\Carbon\Carbon::now()->greaterThan(\Carbon\Carbon::parse($lastUpdateCheckTime));
+        if ($showDashboardNotice) {
 
-        if ($mustUpdate) {
-            event_bind('mw.admin.dashboard.start', function ($item) use ($newVersionNumber) {
-               echo '<div type="standalone-updater/dashboard_notice" new-version="'.$newVersionNumber.'" class="mw-lazy-load-module"></div>';
-            });
+            $latestVersionDetails = mw_standalone_updater_get_latest_version();
+            $newVersionNumber = $latestVersionDetails['version'];
+
+            if (Comparator::equalTo($newVersionNumber, MW_VERSION)) {
+                save_option( 'last_update_check_time',\Carbon\Carbon::parse('+24 hours'),'standalone-updater');
+                return;
+            }
+
+            $mustUpdate = false;
+            if (Comparator::greaterThan($newVersionNumber, MW_VERSION)) {
+                $mustUpdate = true;
+            }
+
+            if ($mustUpdate) {
+                event_bind('mw.admin.dashboard.start', function ($item) use ($newVersionNumber) {
+                   echo '<div type="standalone-updater/dashboard_notice" new-version="'.$newVersionNumber.'" class="mw-lazy-load-module"></div>';
+                });
+            }
         }
-    }
-});
+    });
+}
