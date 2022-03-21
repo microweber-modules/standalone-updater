@@ -5,7 +5,6 @@ use Composer\Semver\Comparator;
 autoload_add_namespace(__DIR__ . '/src/', 'MicroweberPackages\\Modules\\StandaloneUpdater\\');
 
 function mw_standalone_updater_get_latest_version() {
-
      return cache()->remember('standalone_updater_latest_version', 1440, function () {
         $updateApi = 'https://update.microweberapi.com/?api_function=get_download_link&get_last_version=1';
         $version = app()->url_manager->download($updateApi);
