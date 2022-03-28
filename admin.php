@@ -8,7 +8,7 @@ $latestVersionComposerJson = mw_standalone_updater_get_latest_composer_json();
 
 if ($latestVersionComposerJson and isset($latestVersionComposerJson['require']['php']) and $latestVersionComposerJson['require']['php']) {
     $latestPHPVersionNeeded = $latestVersionComposerJson['require']['php'];
-    $latestPHPVersionNeeded = str_replace(['>=', '=', '<=', '<',], '', $latestPHPVersionNeeded);
+    $latestPHPVersionNeeded = str_replace(['>=', '=', '<=', '<','>',], '', $latestPHPVersionNeeded);
 } else {
     $latestPHPVersionNeeded = false;
 }
