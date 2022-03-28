@@ -4,14 +4,27 @@ use Composer\Semver\Comparator;
 
 autoload_add_namespace(__DIR__ . '/src/', 'MicroweberPackages\\Modules\\StandaloneUpdater\\');
 
-function mw_standalone_updater_get_latest_version() {
-     return cache()->remember('standalone_updater_latest_version', 1440, function () {
-        $updateApi = 'https://update.microweberapi.com/?api_function=get_download_link&get_last_version=1';
+function mw_standalone_updater_get_latest_version()
+{
+    return cache()->remember('standalone_updater_latest_version', 1440, function () {
+        $updateApi = 'http://updater.microweberapi.com/builds/laravel9-php8/version.txt';
         $version = app()->url_manager->download($updateApi);
-
-        $version = json_decode($version, true);
-        return $version;
-     });
+        if ($version) {
+            $version = trim($version);
+            return $version;
+        }
+    });
+}
+function mw_standalone_updater_get_latest_composer_json()
+{
+    return cache()->remember('standalone_updater_latest_version_composer_json', 1440, function () {
+        $updateApi = 'http://updater.microweberapi.com/builds/laravel9-php8/composer.json';
+        $json = app()->url_manager->download($updateApi);
+        if ($json) {
+            $json = @json_decode($json,true);
+            return $json;
+        }
+    });
 }
 
 function mw_standalone_updater_delete_recursive($dir)
@@ -37,19 +50,19 @@ if (mw()->ui->disable_marketplace != true) {
     event_bind('mw.admin', function ($params = false) {
 
         // Show new update on dashboard
-        $lastUpdateCheckTime = get_option('last_update_check_time','standalone-updater');
+        $lastUpdateCheckTime = get_option('last_update_check_time', 'standalone-updater');
         if (!$lastUpdateCheckTime) {
             $lastUpdateCheckTime = \Carbon\Carbon::now();
         }
 
-        $showDashboardNotice =\Carbon\Carbon::now()->greaterThan(\Carbon\Carbon::parse($lastUpdateCheckTime));
+        $showDashboardNotice = \Carbon\Carbon::now()->greaterThan(\Carbon\Carbon::parse($lastUpdateCheckTime));
         if ($showDashboardNotice) {
 
-            $latestVersionDetails = mw_standalone_updater_get_latest_version();
-            $newVersionNumber = $latestVersionDetails['version'];
+            $newVersionNumber = mw_standalone_updater_get_latest_version();
+
 
             if (Comparator::equalTo($newVersionNumber, MW_VERSION)) {
-                save_option( 'last_update_check_time',\Carbon\Carbon::parse('+24 hours'),'standalone-updater');
+                save_option('last_update_check_time', \Carbon\Carbon::parse('+24 hours'), 'standalone-updater');
                 return;
             }
 
@@ -60,8 +73,12 @@ if (mw()->ui->disable_marketplace != true) {
 
             if ($mustUpdate) {
                 event_bind('mw.admin.dashboard.start', function ($item) use ($newVersionNumber) {
-                   echo '<div type="standalone-updater/dashboard_notice" new-version="'.$newVersionNumber.'" class="mw-lazy-load-module"></div>';
+                    echo '<div type="standalone-updater/dashboard_notice" new-version="' . $newVersionNumber . '" class="mw-lazy-load-module"></div>';
                 });
+            } else {
+                save_option('last_update_check_time', \Carbon\Carbon::parse('+24 hours'), 'standalone-updater');
+                return;
+
             }
         }
     });
