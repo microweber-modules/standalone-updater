@@ -7,7 +7,7 @@ autoload_add_namespace(__DIR__ . '/src/', 'MicroweberPackages\\Modules\\Standalo
 function mw_standalone_updater_get_latest_version()
 {
     return cache()->remember('standalone_updater_latest_version', 1440, function () {
-        $updateApi = 'http://updater.microweberapi.com/builds/laravel9-php8/version.txt';
+        $updateApi = 'http://updater.microweberapi.com/builds/master/version.txt';
         $version = app()->url_manager->download($updateApi);
         if ($version) {
             $version = trim($version);
@@ -18,7 +18,7 @@ function mw_standalone_updater_get_latest_version()
 function mw_standalone_updater_get_latest_composer_json()
 {
     return cache()->remember('standalone_updater_latest_version_composer_json', 1440, function () {
-        $updateApi = 'http://updater.microweberapi.com/builds/laravel9-php8/composer.json';
+        $updateApi = 'http://updater.microweberapi.com/builds/master/composer.json';
         $json = app()->url_manager->download($updateApi);
         if ($json) {
             $json = @json_decode($json,true);
