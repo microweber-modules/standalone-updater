@@ -45,6 +45,12 @@ if (!is_writable($projectMainDir . DS . 'storage')) {
     $canIUpdateMessages[] = 'The storage folder must be writable.';
 }
 
+if (is_link($projectMainDir . DS . 'vendor')) {
+    $canIUpdate = false;
+    $canIUpdateMessages[] = 'The vendor folder must not be a symlink.';
+}
+
+
 if (!is_writable($projectMainDir . DS . 'vendor')) {
     $canIUpdate = false;
     $canIUpdateMessages[] = 'The vendor folder must be writable.';
