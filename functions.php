@@ -46,9 +46,24 @@ function mw_standalone_updater_delete_recursive($dir)
     @rmdir($dir);
 }
 
-if (mw()->ui->disable_marketplace != true) {
-    event_bind('mw.admin', function ($params = false) {
+function mw_standalone_updater_is_enabled()
+{
 
+    if (mw()->ui->disable_marketplace != true) {
+        return false;
+    }
+    if (is_link(mw_root_path() . DS . 'src')) {
+        return false;
+    }
+    if (is_link(mw_root_path() . DS . 'vendor')) {
+        return false;
+    }
+    return true;
+}
+
+
+event_bind('mw.admin', function ($params = false) {
+    if (mw_standalone_updater_is_enabled()) {
         // Show new update on dashboard
         $lastUpdateCheckTime = get_option('last_update_check_time', 'standalone-updater');
         if (!$lastUpdateCheckTime) {
@@ -81,5 +96,6 @@ if (mw()->ui->disable_marketplace != true) {
 
             }
         }
-    });
-}
+    }
+});
+
