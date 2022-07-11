@@ -99,12 +99,12 @@ class StandaloneUpdateExecutor
         $zip = new \ZipArchive;
         $res = $zip->open(__DIR__ . DIRECTORY_SEPARATOR . $zipFile);
         if ($res === TRUE) {
-            if(method_exists($zip, 'registerProgressCallback')) {
-                $that = $this;
-                $zip->registerProgressCallback(10.00, function ($r) use ($that) {
-                    $that->log('Unzip progress '.printf("%d%%\n", $r * 100).' ...');
-                });
-            }
+          // if(method_exists($zip, 'registerProgressCallback')) {
+          //     $that = $this;
+          //     $zip->registerProgressCallback(10.00, function ($r) use ($that) {
+          //         $that->log('Unzip progress '.printf("%d%%", $r * 100).' ...');
+          //     });
+          // }
             $zip->extractTo(__DIR__ . DIRECTORY_SEPARATOR . 'mw-app-unziped');
             $zip->close();
             $this->log('Unzipping '.$version.' version files done!');
@@ -276,14 +276,15 @@ class StandaloneUpdateReplacer
             $standaloneUpdater = new StandaloneUpdateExecutor();
             $standaloneUpdater->log('adding new files ' . basename($newFile['realPath']));
             */
-            if($copyIterator % 1000 === 0){
+            if($copyIterator % 2000 === 0){
                $this->log('Copying file ' .$copyIterator. ' of ' .$countCopy. ' / ' . basename($newFile['realPath']));
             }
-
 
             copy($newFile['realPath'], $this->microweberPath . $newFile['targetPath']);
 
         }
+
+        $this->log(json_encode(['success'=>true, 'message'=>$countCopy . ' files copied']));
 
         /*
         $this->log('Delete cache folders..');
