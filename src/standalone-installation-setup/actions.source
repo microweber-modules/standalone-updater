@@ -1,8 +1,13 @@
 <?php
+
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 define("INI_SYSTEM_CHECK_DISABLED", ini_get('disable_functions'));
 
 if (!strstr(INI_SYSTEM_CHECK_DISABLED, 'ini_set')) {
-    ini_set("memory_limit", "160M");
+    ini_set("memory_limit", "512M");
     ini_set("set_time_limit", 0);
 }
 
@@ -10,7 +15,7 @@ if (!strstr(INI_SYSTEM_CHECK_DISABLED, 'date_default_timezone_set')) {
     date_default_timezone_set('America/Los_Angeles');
 }
 
-include_once 'Unzip.php';
+include(__DIR__.'/Unzip.php');
 
 class StandaloneUpdateExecutor
 {
@@ -88,16 +93,37 @@ class StandaloneUpdateExecutor
         if ($downloadStatus) {
             $this->log('The '.$version.' version of the system has been downloaded successfully!');
         }
- 
+
         $this->log('Unzipping '.$version.' version files...');
 
-        $unzip = new Unzip();
-        $unzip->extract(__DIR__ . DIRECTORY_SEPARATOR . $zipFile, __DIR__ . DIRECTORY_SEPARATOR . 'mw-app-unziped/', true);
+        $zip = new \ZipArchive;
+        $res = $zip->open(__DIR__ . DIRECTORY_SEPARATOR . $zipFile);
+        if ($res === TRUE) {
+            if(method_exists($zip, 'registerProgressCallback')) {
+                $that = $this;
+                $zip->registerProgressCallback(0.05, function ($r) use ($that) {
+                    $that->log('Unzip progress '.printf("%d%%\n", $r * 100).' ...');
+                });
+            }
+            $zip->extractTo(__DIR__ . DIRECTORY_SEPARATOR . 'mw-app-unziped');
+            $zip->close();
+            $this->log('Unzipping '.$version.' version files done!');
+        } else {
+            $this->log('Error unzipping the '.$version.' version of the system!');
+            throw new Exception('Error unzipping the '.$version.' version of the system!');
+            return FALSE;
+        }
 
         $this->log('Replacing with the new files...');
 
         $replace = new StandaloneUpdateReplacer();
+        $replace->logger = $this;
         $replace->start();
+
+
+
+
+
 
         $message = 'You are up to date!';
 
@@ -112,6 +138,9 @@ class StandaloneUpdateExecutor
             $message .= '<br /><a href="'.$adminUrl.'" class="btn btn-link" style="color:#fff">Back to admin</a>';
         }
 
+
+
+
         $this->log(json_encode(['success'=>true, 'message'=>$message]));
     }
 
@@ -122,7 +151,6 @@ class StandaloneUpdateExecutor
         $options = array(
             CURLOPT_FILE => is_resource($dest) ? $dest : fopen($dest, 'w'),
             CURLOPT_TIMEOUT => 600,
-            CURLOPT_MAX_RECV_SPEED_LARGE => $speedLimit,
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_VERBOSE => true,
             CURLINFO_HEADER_OUT => true,
@@ -180,19 +208,27 @@ if (isset($_GET['format']) && $_GET['format'] == "json") {
         $json['logfile'] = $update->getLogfile();
     }
 
-    die(json_encode($json));
+    print(json_encode($json));
+    exit;
 }
 
 class StandaloneUpdateReplacer
 {
     public $microweberPath;
     public $newMicroweberPath;
+    public $logger = null;
 
     public function __construct()
     {
         $this->microweberPath = dirname(dirname(dirname(__DIR__))) . DIRECTORY_SEPARATOR;
         $this->newMicroweberPath = __DIR__ . DIRECTORY_SEPARATOR . 'mw-app-unziped';
     }
+     public function log($mgs)
+     {
+        if ($this->logger) {
+            $this->logger->log($mgs);
+        }
+     }
 
     public function start()
     {
@@ -217,8 +253,10 @@ class StandaloneUpdateReplacer
         $newFilesForCopy[] = ['realPath'=>$this->newMicroweberPath . DIRECTORY_SEPARATOR . 'README.md','targetPath'=>'README.md'];
         $newFilesForCopy[] = ['realPath'=>$this->newMicroweberPath . DIRECTORY_SEPARATOR . 'CHANGELOG.md','targetPath'=>'CHANGELOG.md'];
 
+        $countCopy = count($newFilesForCopy);
+        $copyIterator = 0;
         foreach($newFilesForCopy as $newFile) {
-
+            $copyIterator++;
             $newFileFolder = dirname($this->microweberPath . $newFile['targetPath']);
             if (!is_dir($newFileFolder)) {
                 mkdir_recursive($newFileFolder);
@@ -236,8 +274,10 @@ class StandaloneUpdateReplacer
 
             /*
             $standaloneUpdater = new StandaloneUpdateExecutor();
-            $standaloneUpdater->log('adding new files ' . filename($newFile['realPath']));
+            $standaloneUpdater->log('adding new files ' . basename($newFile['realPath']));
             */
+
+            $this->log('Copying file ' .$copyIterator. ' of ' .$countCopy. ' / ' . basename($newFile['realPath']));
 
             copy($newFile['realPath'], $this->microweberPath . $newFile['targetPath']);
 
