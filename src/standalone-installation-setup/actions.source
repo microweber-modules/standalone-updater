@@ -117,7 +117,7 @@ class StandaloneUpdateExecutor
         $this->log('Replacing with the new files...');
 
         $replace = new StandaloneUpdateReplacer();
-        $replace->logger = $this;
+       // $replace->logger = $this;
         $replace->start();
 
 
