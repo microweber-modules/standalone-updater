@@ -33,10 +33,26 @@
                     $.get("actions.php?getLogfile=1&format=json", function(data) {
                         readLog(data.logfile);
                     });
-                    // start updating
+                    // Start updating
                     setTimeout(function() {
                     $.get("actions.php?startUpdating=1&format=json", function(data) {
-                        // updating
+                        if (data.updating.downloaded) {
+                            $.get("actions.php?unzippApp=1&format=json", function(data) {
+                                if (data.unzipping.unzipped) {
+                                    $.get("actions.php?replaceFiles=1&format=json", function(data) {
+                                        if (data.replacing.replaced) {
+
+                                        } else {
+                                            $('.js-update-log').html("Can't replace the app files.");
+                                        }
+                                    });
+                                } else {
+                                    $('.js-update-log').html("Can't unzip the app.");
+                                }
+                            });
+                        } else {
+                            $('.js-update-log').html("Can't download the app.");
+                        }
                     });
                     }, 800);
                 });

@@ -106,12 +106,10 @@ class StandaloneUpdateExecutor
         return ['status'=>'success', 'downloaded'=>true];
     }
 
-    public function unzipApp()
+    public function unzippApp()
     {
         $version = $_COOKIE['install_version_source'];
         $zipFile = $_COOKIE['install_version_zip_file'];
-
-        dd($version, $zipFile);
 
         $this->log('Unzipping ' . $version . ' version files...');
 
@@ -121,10 +119,10 @@ class StandaloneUpdateExecutor
             $zip->extractTo(__DIR__ . DIRECTORY_SEPARATOR . 'mw-app-unziped');
             $zip->close();
             $this->log('Unzipping ' . $version . ' version files done!');
+            return ['status'=>'success', 'unzipped'=>true];
         } else {
             $this->log('Error unzipping the ' . $version . ' version of the system!');
-            throw new Exception('Error unzipping the ' . $version . ' version of the system!');
-            return false;
+            return ['status'=>'failed', 'unzipped'=>false];
         }
     }
 
@@ -149,6 +147,8 @@ class StandaloneUpdateExecutor
         }
 
         $this->log(json_encode(['success'=>true, 'message'=>$message]));
+
+        return ['status'=>'success', 'replaced'=>true];
     }
 
     public function downloadFile($url, $dest)
@@ -203,6 +203,16 @@ if (isset($_GET['format']) && $_GET['format'] == "json") {
     if (isset($_GET['startUpdating']) && $_GET['startUpdating'] == 1) {
         $update = new StandaloneUpdateExecutor();
         $json['updating'] = $update->startUpdating();
+    }
+
+    if (isset($_GET['unzippApp']) && $_GET['unzippApp'] == 1) {
+        $update = new StandaloneUpdateExecutor();
+        $json['unzipping'] = $update->unzippApp();
+    }
+
+    if (isset($_GET['replaceFiles']) && $_GET['replaceFiles'] == 1) {
+        $update = new StandaloneUpdateExecutor();
+        $json['replacing'] = $update->replaceFiles();
     }
 
     if (isset($_GET['isStarted']) && $_GET['isStarted'] == 1) {
