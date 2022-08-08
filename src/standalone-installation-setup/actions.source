@@ -1,6 +1,5 @@
 <?php
 
-
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -37,9 +36,17 @@ class StandaloneUpdateExecutor
     public function startSession()
     {
         if (!isset($_COOKIE['install_session_id'])) {
-            setcookie('install_session_id', rand(2222,4444), time() + (1800), "/");
+            $this->setCookie('install_session_id', rand(2222,4444));
             $this->log('Starting the installation session..');
+            return true;
         }
+
+        return false;
+    }
+
+    public function setCookie($key, $value)
+    {
+        return setcookie($key, $value, time() + (1800), "/");
     }
 
     public function setInstallVersion($version = 'latest')
@@ -73,57 +80,60 @@ class StandaloneUpdateExecutor
     {
         $version = 'latest';
 
-        if (isset($_COOKIE['install_session_version'])  && $_COOKIE['install_session_version'] == 'dev') {
+        if (isset($_COOKIE['install_session_version']) && $_COOKIE['install_session_version'] == 'dev') {
             $version = 'developer';
             $installVersion = $this->latestDevVersion();
         } else {
             $installVersion = $this->latestVersion();
             if (!$installVersion['url']) {
-                echo "Can't update the version now.";
-                return;
+                $this->log("We can't download latest version right now.");
+                return ['status'=>'failed', 'downloaded'=>false];
             }
         }
 
-        $this->log('Downloading '.$version.' version of system.');
+        $this->log('Downloading ' . $version . ' version of system.');
 
         $zipFile = time() . 'mw-app.zip';
 
         $downloadStatus = $this->downloadFile($installVersion['url'], $zipFile);
-
         if ($downloadStatus) {
-            $this->log('The '.$version.' version of the system has been downloaded successfully!');
+            $this->log('The ' . $version . ' version of the system has been downloaded successfully!');
         }
 
-        $this->log('Unzipping '.$version.' version files...');
+        $this->setCookie('install_version_source', $version);
+        $this->setCookie('install_version_zip_file', $zipFile);
+
+        return ['status'=>'success', 'downloaded'=>true];
+    }
+
+    public function unzipApp()
+    {
+        $version = $_COOKIE['install_version_source'];
+        $zipFile = $_COOKIE['install_version_zip_file'];
+
+        dd($version, $zipFile);
+
+        $this->log('Unzipping ' . $version . ' version files...');
 
         $zip = new \ZipArchive;
         $res = $zip->open(__DIR__ . DIRECTORY_SEPARATOR . $zipFile);
         if ($res === TRUE) {
-          // if(method_exists($zip, 'registerProgressCallback')) {
-          //     $that = $this;
-          //     $zip->registerProgressCallback(10.00, function ($r) use ($that) {
-          //         $that->log('Unzip progress '.printf("%d%%", $r * 100).' ...');
-          //     });
-          // }
             $zip->extractTo(__DIR__ . DIRECTORY_SEPARATOR . 'mw-app-unziped');
             $zip->close();
-            $this->log('Unzipping '.$version.' version files done!');
+            $this->log('Unzipping ' . $version . ' version files done!');
         } else {
-            $this->log('Error unzipping the '.$version.' version of the system!');
-            throw new Exception('Error unzipping the '.$version.' version of the system!');
-            return FALSE;
+            $this->log('Error unzipping the ' . $version . ' version of the system!');
+            throw new Exception('Error unzipping the ' . $version . ' version of the system!');
+            return false;
         }
+    }
 
+    public function replaceFiles()
+    {
         $this->log('Replacing with the new files...');
 
         $replace = new StandaloneUpdateReplacer();
-       // $replace->logger = $this;
         $replace->start();
-
-
-
-
-
 
         $message = 'You are up to date!';
 
@@ -137,9 +147,6 @@ class StandaloneUpdateExecutor
             $adminUrl = $_COOKIE['admin_url'];
             $message .= '<br /><a href="'.$adminUrl.'" class="btn btn-link" style="color:#fff">Back to admin</a>';
         }
-
-
-
 
         $this->log(json_encode(['success'=>true, 'message'=>$message]));
     }
@@ -272,24 +279,12 @@ class StandaloneUpdateReplacer
                 @unlink($this->microweberPath . $newFile['targetPath']);
             }
 
-            /*
-            $standaloneUpdater = new StandaloneUpdateExecutor();
-            $standaloneUpdater->log('adding new files ' . basename($newFile['realPath']));
-            */
-           // if($copyIterator % 2000 === 0){
-           //    $this->log('Copying file ' .$copyIterator. ' of ' .$countCopy. ' / ' . basename($newFile['realPath']));
-           // }
-
             copy($newFile['realPath'], $this->microweberPath . $newFile['targetPath']);
 
         }
 
         $this->log(json_encode(['success'=>true, 'message'=>$countCopy . ' files copied']));
 
-        /*
-        $this->log('Delete cache folders..');
-        $this->deleteDirectoryRecursive($this->newMicroweberPath);
-        */
     }
 
     public function filesAreEqual($a, $b)
@@ -342,6 +337,3 @@ class StandaloneUpdateReplacer
         return $filesMap;
     }
 }
-/*
-$replace = new StandaloneUpdateReplacer();
-$replace->start();*/
