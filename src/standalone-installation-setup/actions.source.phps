@@ -14,7 +14,7 @@ if (!strstr(INI_SYSTEM_CHECK_DISABLED, 'date_default_timezone_set')) {
     date_default_timezone_set('America/Los_Angeles');
 }
 
-include(__DIR__.'/Unzip.php');
+include(__DIR__ . '/Unzip.php');
 
 class StandaloneUpdateExecutor
 {
@@ -36,7 +36,7 @@ class StandaloneUpdateExecutor
     public function startSession()
     {
         if (!isset($_COOKIE['install_session_id'])) {
-            $this->setCookie('install_session_id', rand(2222,4444));
+            $this->setCookie('install_session_id', rand(2222, 4444));
             $this->log('Starting the installation session..');
             return true;
         }
@@ -62,18 +62,20 @@ class StandaloneUpdateExecutor
         return true;
     }
 
-    public function latestVersion() {
+    public function latestVersion()
+    {
 
-       $latestMasterVersionZip = 'http://updater.microweberapi.com/microweber-master.zip';
+        $latestMasterVersionZip = 'http://updater.microweberapi.com/microweber-master.zip';
 
-       return ['url'=>$latestMasterVersionZip];
+        return ['url' => $latestMasterVersionZip];
     }
 
-    public function latestDevVersion() {
+    public function latestDevVersion()
+    {
 
         $latestDevVersionZip = 'http://updater.microweberapi.com/microweber-dev.zip';
 
-        return ['url'=>$latestDevVersionZip];
+        return ['url' => $latestDevVersionZip];
     }
 
     public function startUpdating()
@@ -87,7 +89,7 @@ class StandaloneUpdateExecutor
             $installVersion = $this->latestVersion();
             if (!$installVersion['url']) {
                 $this->log("We can't download latest version right now.");
-                return ['status'=>'failed', 'downloaded'=>false];
+                return ['status' => 'failed', 'downloaded' => false];
             }
         }
 
@@ -103,7 +105,7 @@ class StandaloneUpdateExecutor
         $this->setCookie('install_version_source', $version);
         $this->setCookie('install_version_zip_file', $zipFile);
 
-        return ['status'=>'success', 'downloaded'=>true];
+        return ['status' => 'success', 'downloaded' => true];
     }
 
     public function unzippApp()
@@ -119,11 +121,47 @@ class StandaloneUpdateExecutor
             $zip->extractTo(__DIR__ . DIRECTORY_SEPARATOR . 'mw-app-unziped');
             $zip->close();
             $this->log('Unzipping ' . $version . ' version files done!');
-            return ['status'=>'success', 'unzipped'=>true];
+            return ['status' => 'success', 'unzipped' => true];
         } else {
             $this->log('Error unzipping the ' . $version . ' version of the system!');
-            return ['status'=>'failed', 'unzipped'=>false];
+            return ['status' => 'failed', 'unzipped' => false];
         }
+    }
+
+    public function replaceFilesPrepareStepsNeeded()
+    {
+        $this->log('Preparing replace steps...');
+
+        $replace = new StandaloneUpdateReplacer();
+        $steps = $replace->prepareSteps();
+
+        return ['status' => 'success', 'steps_needed' => $steps];
+
+    }
+
+
+    public function replaceFilesExecStep($step)
+    {
+
+        $replace = new StandaloneUpdateReplacer();
+        $replace->logger = $this;
+        $step = $replace->replaceFilesExecStep($step);
+
+        return ['status' => 'success', 'step_executed' => $step];
+
+    }
+
+    public function replaceFilesExecCleanupStep($step)
+    {
+
+        $replace = new StandaloneUpdateReplacer();
+        $replace->logger = $this;
+        $step = $replace->replaceFilesExecCleanupStep($step);
+
+
+
+        return ['status' => 'success', 'step_executed' => $step];
+
     }
 
     public function replaceFiles()
@@ -143,12 +181,12 @@ class StandaloneUpdateExecutor
 
         if (!empty($_COOKIE['admin_url'])) {
             $adminUrl = $_COOKIE['admin_url'];
-            $message .= '<br /><a href="'.$adminUrl.'" class="btn btn-link" style="color:#fff">Back to admin</a>';
+            $message .= '<br /><a href="' . $adminUrl . '" class="btn btn-link" style="color:#fff">Back to admin</a>';
         }
 
-        $this->log(json_encode(['success'=>true, 'message'=>$message]));
+        $this->log(json_encode(['success' => true, 'message' => $message]));
 
-        return ['status'=>'success', 'replaced'=>true];
+        return ['status' => 'success', 'replaced' => true];
     }
 
     public function downloadFile($url, $dest)
@@ -165,6 +203,7 @@ class StandaloneUpdateExecutor
             CURLOPT_FAILONERROR => true, // HTTP code > 400 will throw curl error
         );
 
+
         if (isset($_COOKIE['max_receive_speed_download']) && $_COOKIE['max_receive_speed_download'] > 0) {
             $speedLimit = (intval($_COOKIE['max_receive_speed_download']) * 1024 * 1024);
             $options[CURLOPT_MAX_RECV_SPEED_LARGE] = $speedLimit;
@@ -174,6 +213,12 @@ class StandaloneUpdateExecutor
             $options[CURLOPT_STDERR] = fopen($logFile, 'a+');
             $options[CURLOPT_WRITEHEADER] = fopen($logFile, 'a+');
         }
+
+
+        $options[CURLOPT_PROGRESSFUNCTION] = array($this, 'downloadFileProgress');
+        $options[CURLOPT_BUFFERSIZE] = 1000000;
+        $options[CURLOPT_NOPROGRESS] = false;
+
 
         $ch = curl_init();
 
@@ -187,9 +232,24 @@ class StandaloneUpdateExecutor
             return true;
         }
     }
+
+    public function downloadFileProgress($resource, $downloadSize, $downloaded, $uploadSize, $uploaded)
+    {
+        $this->log('Downloaded ' . $downloaded . ' of ' . $downloadSize . ' bytes.');
+
+
+//         [
+//            'resource' => $resource,
+//            'download_size' => $downloadSize,
+//            'downloaded' => $downloaded,
+//            'upload_size' => $uploadSize,
+//            'uploaded' => $uploaded
+//        ]
+
+    }
 }
 
-if (isset($_GET['format']) && $_GET['format'] == "json") {
+if (isset($_REQUEST['format']) && $_REQUEST['format'] == "json") {
 
     $json = [];
     header('Content-Type: application/json');
@@ -213,6 +273,18 @@ if (isset($_GET['format']) && $_GET['format'] == "json") {
     if (isset($_GET['replaceFiles']) && $_GET['replaceFiles'] == 1) {
         $update = new StandaloneUpdateExecutor();
         $json['replacing'] = $update->replaceFiles();
+    }
+    if (isset($_GET['replaceFilesPrepareStepsNeeded']) && $_GET['replaceFilesPrepareStepsNeeded'] == 1) {
+        $update = new StandaloneUpdateExecutor();
+        $json['replace_steps'] = $update->replaceFilesPrepareStepsNeeded();
+    }
+    if (isset($_GET['replaceFilesExecStep']) && $_GET['replaceFilesExecStep']) {
+        $update = new StandaloneUpdateExecutor();
+        $json['replace_step_result'] = $update->replaceFilesExecStep(intval($_GET['replaceFilesExecStep']));
+    }
+    if (isset($_GET['replaceFilesExecCleanupStep']) && $_GET['replaceFilesExecStep']) {
+        $update = new StandaloneUpdateExecutor();
+        $json['clean_step_result'] = $update->replaceFilesExecCleanupStep();
     }
 
     if (isset($_GET['isStarted']) && $_GET['isStarted'] == 1) {
@@ -240,14 +312,76 @@ class StandaloneUpdateReplacer
         $this->microweberPath = dirname(dirname(dirname(__DIR__))) . DIRECTORY_SEPARATOR;
         $this->newMicroweberPath = __DIR__ . DIRECTORY_SEPARATOR . 'mw-app-unziped';
     }
-     public function log($mgs)
-     {
+
+    public function log($mgs)
+    {
         if ($this->logger) {
             $this->logger->log($mgs);
         }
-     }
+    }
 
-    public function start()
+    public function replaceFilesExecCleanupStep()
+    {
+        $steps_file = $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'replace_steps.json';
+        $this->deleteDirectoryRecursive($this->newMicroweberPath);
+    }
+
+
+    public function replaceFilesExecStep($step)
+    {
+        if ($step == 0) {
+            $this->deleteOldDirectories();
+        }
+
+        $steps_file = $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'replace_steps.json';
+        $step_data = json_decode(file_get_contents($steps_file), true);
+
+
+        if (isset($step_data[$step]) and is_array($step_data[$step]) and !empty($step_data[$step])) {
+            $newFilesForCopy = $step_data[$step];
+            $this->performFilesCopy($newFilesForCopy);
+
+        }
+
+        $this->log('Completed replace step ' . $step);
+
+        return $step;
+    }
+
+    public function prepareSteps()
+    {
+        $steps_file = $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'replace_steps.json';
+
+        $files = $this->getFilesToCopy();
+        $chunks = array_chunk($files, 1000);
+
+        $json = json_encode($chunks);
+        file_put_contents($steps_file, $json);
+
+        return count($chunks);
+    }
+
+    public function getFilesToCopy()
+    {
+        $newFilesForCopy = [];
+        $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath($this->newMicroweberPath . DIRECTORY_SEPARATOR . 'userfiles' . DIRECTORY_SEPARATOR . 'templates'));
+        $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath($this->newMicroweberPath . DIRECTORY_SEPARATOR . 'userfiles' . DIRECTORY_SEPARATOR . 'modules'));
+        $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath($this->newMicroweberPath . DIRECTORY_SEPARATOR . 'userfiles' . DIRECTORY_SEPARATOR . 'elements'));
+        $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath($this->newMicroweberPath . DIRECTORY_SEPARATOR . 'src'));
+        $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath($this->newMicroweberPath . DIRECTORY_SEPARATOR . 'vendor'));
+
+        $newFilesForCopy[] = ['realPath' => $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'composer.lock', 'targetPath' => 'composer.lock'];
+        $newFilesForCopy[] = ['realPath' => $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'composer.json', 'targetPath' => 'composer.json'];
+
+        $newFilesForCopy[] = ['realPath' => $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'version.txt', 'targetPath' => 'version.txt'];
+        $newFilesForCopy[] = ['realPath' => $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'ABOUT.md', 'targetPath' => 'ABOUT.md'];
+        $newFilesForCopy[] = ['realPath' => $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'README.md', 'targetPath' => 'README.md'];
+        $newFilesForCopy[] = ['realPath' => $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'CHANGELOG.md', 'targetPath' => 'CHANGELOG.md'];
+
+        return $newFilesForCopy;
+    }
+
+    public function deleteOldDirectories()
     {
         $this->deleteDirectoryRecursive($this->microweberPath . 'vendor');
         $this->deleteDirectoryRecursive($this->microweberPath . 'bootstrap ' . DIRECTORY_SEPARATOR . 'cache');
@@ -256,23 +390,13 @@ class StandaloneUpdateReplacer
         $this->deleteDirectoryRecursive($this->microweberPath . 'userfiles' . DIRECTORY_SEPARATOR . 'cache');
         $this->deleteDirectoryRecursive($this->microweberPath . 'userfiles' . DIRECTORY_SEPARATOR . 'css' . DIRECTORY_SEPARATOR . 'admin-css');
 
-        $newFilesForCopy = [];
-        $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath( $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'userfiles'.DIRECTORY_SEPARATOR.'templates'));
-        $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath( $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'userfiles'.DIRECTORY_SEPARATOR.'modules'));
-        $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath( $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'userfiles'.DIRECTORY_SEPARATOR.'elements'));
-        $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath( $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'src'));
-        $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath( $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'vendor'));
+    }
 
-        $newFilesForCopy[] = ['realPath'=>$this->newMicroweberPath . DIRECTORY_SEPARATOR . 'composer.lock','targetPath'=>'composer.lock'];
-        $newFilesForCopy[] = ['realPath'=>$this->newMicroweberPath . DIRECTORY_SEPARATOR . 'composer.json','targetPath'=>'composer.json'];
-
-        $newFilesForCopy[] = ['realPath'=>$this->newMicroweberPath . DIRECTORY_SEPARATOR . 'ABOUT.md','targetPath'=>'ABOUT.md'];
-        $newFilesForCopy[] = ['realPath'=>$this->newMicroweberPath . DIRECTORY_SEPARATOR . 'README.md','targetPath'=>'README.md'];
-        $newFilesForCopy[] = ['realPath'=>$this->newMicroweberPath . DIRECTORY_SEPARATOR . 'CHANGELOG.md','targetPath'=>'CHANGELOG.md'];
-
+    public function performFilesCopy($newFilesForCopy)
+    {
         $countCopy = count($newFilesForCopy);
         $copyIterator = 0;
-        foreach($newFilesForCopy as $newFile) {
+        foreach ($newFilesForCopy as $newFile) {
             $copyIterator++;
             $newFileFolder = dirname($this->microweberPath . $newFile['targetPath']);
             if (!is_dir($newFileFolder)) {
@@ -280,7 +404,7 @@ class StandaloneUpdateReplacer
             }
 
             if (is_file($this->microweberPath . $newFile['targetPath'])) {
-                if ($this->filesAreEqual($newFile['realPath'],$this->microweberPath . $newFile['targetPath'])) {
+                if ($this->filesAreEqual($newFile['realPath'], $this->microweberPath . $newFile['targetPath'])) {
                     continue;
                 }
             }
@@ -292,10 +416,21 @@ class StandaloneUpdateReplacer
             copy($newFile['realPath'], $this->microweberPath . $newFile['targetPath']);
 
         }
+    }
 
-        $this->log(json_encode(['success'=>true, 'message'=>$countCopy . ' files copied']));
+    public function start()
+    {
+        $this->deleteOldDirectories();
+        $newFilesForCopy = $this->getFilesToCopy();
+
+        $countCopy = count($newFilesForCopy);
+
+        $this->performFilesCopy($newFilesForCopy);
+
+        $this->log(json_encode(['success' => true, 'message' => $countCopy . ' files copied']));
 
     }
+
 
     public function filesAreEqual($a, $b)
     {
@@ -339,9 +474,9 @@ class StandaloneUpdateReplacer
             if (!$fileinfo->isDir()) {
 
                 $targetPath = $fileinfo->getRealPath();
-                $targetPath = str_replace($this->newMicroweberPath,'', $targetPath);
+                $targetPath = str_replace($this->newMicroweberPath, '', $targetPath);
 
-                $filesMap[] = ['realPath'=>$fileinfo->getRealPath(),'targetPath'=>$targetPath];
+                $filesMap[] = ['realPath' => $fileinfo->getRealPath(), 'targetPath' => $targetPath];
             }
         }
         return $filesMap;

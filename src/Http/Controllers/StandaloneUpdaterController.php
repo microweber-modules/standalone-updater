@@ -47,13 +47,13 @@ class StandaloneUpdaterController extends AdminController
 
         $standaloneUpdaterMainPath = modules_path() . 'standalone-updater'.DS.'src';
 
-        $sourceActions = file_get_contents($standaloneUpdaterMainPath . '/standalone-installation-setup/actions.source');
+        $sourceActions = file_get_contents($standaloneUpdaterMainPath . '/standalone-installation-setup/actions.source.phps');
         $saveActions = file_put_contents($updateCacheDir . DS . 'actions.php', $sourceActions);
 
-        $sourceUpdater = file_get_contents($standaloneUpdaterMainPath . '/standalone-installation-setup/index.source');
+        $sourceUpdater = file_get_contents($standaloneUpdaterMainPath . '/standalone-installation-setup/index.source.phps');
         $saveIndex = file_put_contents($updateCacheDir . DS . 'index.php', $sourceUpdater);
 
-        $sourceUnzip = file_get_contents($standaloneUpdaterMainPath . '/standalone-installation-setup/Unzip.source');
+        $sourceUnzip = file_get_contents($standaloneUpdaterMainPath . '/standalone-installation-setup/Unzip.source.phps');
         $saveUnzip = file_put_contents($updateCacheDir . DS . 'Unzip.php', $sourceUnzip);
 
         if ($saveActions && $saveIndex && $saveUnzip) {
