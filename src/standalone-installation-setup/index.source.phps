@@ -111,10 +111,17 @@
             async: false, //blocks window close
             success: function (data2) {
                 if (data2.step_executed) {
-                    if(data2.step_executed == numsteps) {
-                        $('.blob').fadeOut();
-                        $('.js-updating-the-software-text').html('Done!');
+                    if(parseInt(data2.step_executed) >= parseInt(numsteps)) {
+
+                    if(typeof readlogInterval !== 'undefined') {
                         clearInterval(readlogInterval);
+                    }
+
+                     setTimeout(function () {
+                         $('.blob').fadeOut();
+                         $('.js-updating-the-software-text').html('Done!');
+                     }, 1000);
+
                     }
 
                 } else {
