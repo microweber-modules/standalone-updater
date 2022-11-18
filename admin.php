@@ -23,12 +23,20 @@ if (is_dir($projectMainDir . DS . '.git')) {
     $canIUpdateMessages[] = 'The git repository is recognized on your server.';
 }
 
+
+
 /*
 if (app()->environment() == 'production') {
     $canIUpdate = false;
     $canIUpdateMessages[] = 'The app is on production environment.';
 }
 */
+
+if (!class_exists('ZipArchive') ) {
+    $canIUpdate = false;
+    $canIUpdateMessages[] = 'ZipArchive PHP extension is required auto updater.';
+}
+
 
 if (!is_writable($projectMainDir . DS . 'src')) {
     $canIUpdate = false;
