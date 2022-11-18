@@ -151,12 +151,12 @@ class StandaloneUpdateExecutor
 
     }
 
-    public function replaceFilesExecCleanupStep($step)
+    public function replaceFilesExecCleanupStep()
     {
 
         $replace = new StandaloneUpdateReplacer();
         $replace->logger = $this;
-        $step = $replace->replaceFilesExecCleanupStep($step);
+        $step = $replace->replaceFilesExecCleanupStep();
 
 
 

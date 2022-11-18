@@ -116,7 +116,7 @@
                     if(typeof readlogInterval !== 'undefined') {
                         clearInterval(readlogInterval);
                     }
-
+                    execCleanupStepAjax()
                      setTimeout(function () {
                          $('.blob').fadeOut();
                          $('.js-updating-the-software-text').html('Done!');
