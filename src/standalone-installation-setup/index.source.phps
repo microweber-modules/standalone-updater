@@ -120,11 +120,12 @@
                      setTimeout(function () {
                          $('.blob').fadeOut();
                          $('.js-updating-the-software-text').html('Done!');
+                         $('.js-update-log').html("You can visit your site now.");
+                         $('.js-update-log').append("<br><br><a class='mw-standalone-text' href='../../../'>Go to site</a>");
+
                      }, 1000);
                     }
 
-                } else {
-                    $('.js-update-log').html("Can't replace the app files.");
                 }
             },
             complete: function (data2) {
@@ -173,7 +174,7 @@
         position: fixed;
     }
 
-    .mw-standalone-text h4, h6{
+    .mw-standalone-text h4, h6, a.mw-standalone-text{
         color: #ffffff;
     }
 
