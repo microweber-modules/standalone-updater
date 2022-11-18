@@ -110,8 +110,8 @@
             },
             async: false, //blocks window close
             success: function (data2) {
-                if (data2.step_executed) {
-                    if(parseInt(data2.step_executed) >= parseInt(numsteps)) {
+                if (data2.replace_step_result.step_executed) {
+                    if(parseInt(data2.replace_step_result.step_executed) >= parseInt(numsteps)) {
 
                     if(typeof readlogInterval !== 'undefined') {
                         clearInterval(readlogInterval);
@@ -121,7 +121,6 @@
                          $('.blob').fadeOut();
                          $('.js-updating-the-software-text').html('Done!');
                      }, 1000);
-
                     }
 
                 } else {
