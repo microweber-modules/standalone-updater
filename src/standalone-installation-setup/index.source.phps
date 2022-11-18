@@ -120,8 +120,6 @@
                 } else {
                     $('.js-update-log').html("Can't replace the app files.");
                 }
-
-                }
             },
             complete: function (data2) {
                 step++;
