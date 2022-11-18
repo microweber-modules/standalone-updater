@@ -323,7 +323,7 @@ class StandaloneUpdateReplacer
     public function replaceFilesExecCleanupStep()
     {
         $steps_file = $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'replace_steps.json';
-        $this->deleteDirectoryRecursive($this->newMicroweberPath);
+        return $this->deleteDirectoryRecursive($this->newMicroweberPath);
     }
 
 
@@ -463,7 +463,7 @@ class StandaloneUpdateReplacer
             @$todo($fileinfo->getRealPath());
         }
 
-        @rmdir($path);
+       return @rmdir($path);
     }
 
     public function getFilesFromPath($path)
