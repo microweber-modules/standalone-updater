@@ -282,7 +282,7 @@ if (isset($_REQUEST['format']) && $_REQUEST['format'] == "json") {
         $update = new StandaloneUpdateExecutor();
         $json['replace_step_result'] = $update->replaceFilesExecStep(intval($_GET['replaceFilesExecStep']));
     }
-    if (isset($_GET['replaceFilesExecCleanupStep']) && $_GET['replaceFilesExecStep']) {
+    if (isset($_GET['replaceFilesExecCleanupStep'])) {
         $update = new StandaloneUpdateExecutor();
         $json['clean_step_result'] = $update->replaceFilesExecCleanupStep();
     }
