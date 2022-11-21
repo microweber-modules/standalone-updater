@@ -37,18 +37,18 @@
                     setTimeout(function() {
                     $.get("actions.php?startUpdating=1&format=json", function(data) {
                         if (data.updating.downloaded) {
-                            $.get("actions.php?unzippAppGetNumberOfStepsNeeded=1&format=json", function (data) {
+             /*               $.get("actions.php?unzippAppGetNumberOfStepsNeeded=1&format=json", function (data) {
                                     if (data.unzipping.unzip_steps_needed) {
                                         execUnzipChunkStepsAjax(data.unzipping.unzip_steps_needed)
                                     } else {
                                         $('.js-update-log').html("Cannot open the zip with updates file.");
                                     }
                             });
+*/
 
 
 
-
-                       /*     $.get("actions.php?unzippApp=1&format=json", function (data) {
+                          $.get("actions.php?unzippApp=1&format=json", function (data) {
                                 if (data.unzipping.unzipped) {
                                     $.get("actions.php?replaceFilesPrepareStepsNeeded=1&format=json", function (data) {
                                         if (data.replace_steps.steps_needed) {
@@ -62,7 +62,7 @@
                                     $('.js-update-log').html("Can't unzip the app.");
                                 }
                             });
-*/
+
 
 
 
@@ -77,8 +77,8 @@
         });
     });
 
-    async function execCleanupStepAjax() {
-        await $.get('actions.php?replaceFilesExecCleanupStep=1&format=json', function(data) {
+      function execCleanupStepAjax() {
+          $.get('actions.php?replaceFilesExecCleanupStep=1&format=json', function(data) {
 
         });
     }
@@ -171,7 +171,7 @@
                     }
                         setTimeout(function () {
                             execCleanupStepAjax()
-                        }, 10000);
+                        }, 15000);
                      setTimeout(function () {
                          $('.blob').fadeOut();
                          $('.js-updating-the-software-text').html('Done!');

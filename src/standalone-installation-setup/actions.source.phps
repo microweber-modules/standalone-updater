@@ -112,8 +112,10 @@ class StandaloneUpdateExecutor
     {
         $version = $_COOKIE['install_version_source'];
         $zipFile = $_COOKIE['install_version_zip_file'];
-        $version = str_replace('..', '', $version);
-        $zipFile = str_replace('..', '', $zipFile);
+
+        $version = $this->sanitizeString($version);
+        $zipFile =  $this->sanitizeString($zipFile);
+
 
 
         $this->log('Unzipping ' . $version . ' version files...');
@@ -152,16 +154,24 @@ class StandaloneUpdateExecutor
 
 
     }
+    public function sanitizeString($string)
+    {
+        $string = strtolower(trim(preg_replace('/[^A-Za-z0-9-_.]+/', '-', $string)));
+        $string = str_replace('..', '', $string);
+        $string = str_replace('\\', '', $string);
+        $string = str_replace('/', '', $string);
 
+        return $string;
+    }
     public function unzipAppExecStep($step)
     {
         $step = intval($step);
         $version = $_COOKIE['install_version_source'];
         $zipFile = $_COOKIE['install_version_zip_file'];
-        $version = str_replace('..', '', $version);
-        $zipFile = str_replace('..', '', $zipFile);
+        $version = $this->sanitizeString($version);
+        $zipFile =  $this->sanitizeString($zipFile);
         $extractToFolder = __DIR__ . DIRECTORY_SEPARATOR . 'mw-app-unziped';
-        $this->log('Unzipping step ' . $step . ' of ' . $version . ' version files...');
+        $this->log('Extracting files from archive step ' . $step . ' of ' . $version . ' version files...');
 
         $zip = new \ZipArchive;
         $res = $zip->open(__DIR__ . DIRECTORY_SEPARATOR . $zipFile);
@@ -172,6 +182,7 @@ class StandaloneUpdateExecutor
                 $files = $steps[$step];
                 $logOnce = false;
                 foreach ($files as $file) {
+                    $file = normalize_path($file, false);
                     if (!$logOnce) {
                         $this->log('Unzipping ' . str_limit($file, 50) . ' ...');
                         $logOnce = true;
@@ -181,7 +192,7 @@ class StandaloneUpdateExecutor
                         mkdir_recursive($dn);
                     }
                     $extractThefile = $zip->extractTo($extractToFolder, $file);
-                }
+                 }
 
             }
         }
@@ -196,8 +207,8 @@ class StandaloneUpdateExecutor
     {
         $version = $_COOKIE['install_version_source'];
         $zipFile = $_COOKIE['install_version_zip_file'];
-        $version = str_replace('..', '', $version);
-        $zipFile = str_replace('..', '', $zipFile);
+        $version = $this->sanitizeString($version);
+        $zipFile =  $this->sanitizeString($zipFile);
 
         $this->log('Unzipping ' . $version . ' version files...');
 
@@ -451,6 +462,9 @@ class StandaloneUpdateReplacer
 
     public function prepareSteps()
     {
+        if(!is_dir($this->newMicroweberPath)){
+            mkdir_recursive($this->newMicroweberPath);
+        }
         $steps_file = $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'replace_steps.json';
 
         $files = $this->getFilesToCopy();
@@ -570,6 +584,9 @@ class StandaloneUpdateReplacer
     public function getFilesFromPath($path)
     {
         $filesMap = [];
+        if(!is_dir($path)){
+            return $filesMap;
+        }
         $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \RecursiveDirectoryIterator::SKIP_DOTS), \RecursiveIteratorIterator::CHILD_FIRST);
         foreach ($files as $fileinfo) {
             if (!$fileinfo->isDir()) {
