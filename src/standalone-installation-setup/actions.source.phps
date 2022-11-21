@@ -235,7 +235,11 @@ class StandaloneUpdateExecutor
 
     public function downloadFileProgress($resource, $downloadSize, $downloaded, $uploadSize, $uploaded)
     {
-        $this->log('Downloaded ' . $downloaded . ' of ' . $downloadSize . ' bytes.');
+        if($downloadSize > 0 and $downloaded > 0) {
+            $percent = round(($downloaded / $downloadSize) * 100, 2);
+            $this->log('Downloaded ' . $percent . '%');
+        }
+       // $this->log('Downloaded ' . $downloaded . ' of ' . $downloadSize . ' bytes.');
 
 
 //         [

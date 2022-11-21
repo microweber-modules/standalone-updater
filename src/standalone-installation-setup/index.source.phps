@@ -37,39 +37,16 @@
                     setTimeout(function() {
                     $.get("actions.php?startUpdating=1&format=json", function(data) {
                         if (data.updating.downloaded) {
-                            $.get("actions.php?unzippApp=1&format=json", function(data) {
+                            $.get("actions.php?unzippApp=1&format=json", function (data) {
                                 if (data.unzipping.unzipped) {
-                                    $.get("actions.php?replaceFilesPrepareStepsNeeded=1&format=json", function(data) {
-
-
+                                    $.get("actions.php?replaceFilesPrepareStepsNeeded=1&format=json", function (data) {
                                         if (data.replace_steps.steps_needed) {
                                             execReplaceStepsAjax(data.replace_steps.steps_needed)
-
-
-
-
-
                                         } else {
                                             $('.js-update-log').html("Can't prepare replace steps.");
                                         }
 
-
-
-
-
-                                        // if (data.replacing.replaced) {
-                                        //
-                                        // } else {
-                                        //     $('.js-update-log').html("Can't replace the app files.");
-                                        // }
                                     });
-                                    // $.get("actions.php?replaceFiles=1&format=json", function(data) {
-                                    //     if (data.replacing.replaced) {
-                                    //
-                                    //     } else {
-                                    //         $('.js-update-log').html("Can't replace the app files.");
-                                    //     }
-                                    // });
                                 } else {
                                     $('.js-update-log').html("Can't unzip the app.");
                                 }
