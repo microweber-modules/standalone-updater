@@ -169,9 +169,9 @@
                     if(typeof readlogInterval !== 'undefined') {
                         clearInterval(readlogInterval);
                     }
-                        setTimeout(function () {
-                            execCleanupStepAjax()
-                        }, 15000);
+                        // setTimeout(function () {
+                        //   //  execCleanupStepAjax()
+                        // }, 15000);
                      setTimeout(function () {
                          $('.blob').fadeOut();
                          $('.js-updating-the-software-text').html('Done!');
@@ -186,6 +186,12 @@
                 step++;
 
                 execReplaceStepsAjax(numsteps, step)
+
+                if(step >= numsteps) {
+                    setTimeout(function () {
+                        execCleanupStepAjax()
+                    }, 15000);
+                }
              }
         });
 
