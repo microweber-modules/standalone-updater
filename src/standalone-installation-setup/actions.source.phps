@@ -108,10 +108,96 @@ class StandaloneUpdateExecutor
         return ['status' => 'success', 'downloaded' => true];
     }
 
+    public function unzippAppGetNumberOfStepsNeeded()
+    {
+        $version = $_COOKIE['install_version_source'];
+        $zipFile = $_COOKIE['install_version_zip_file'];
+        $version = str_replace('..', '', $version);
+        $zipFile = str_replace('..', '', $zipFile);
+
+
+        $this->log('Unzipping ' . $version . ' version files...');
+        $filesInZip = [];
+
+        $zip = new \ZipArchive;
+        $res = $zip->open(__DIR__ . DIRECTORY_SEPARATOR . $zipFile);
+        if ($res === TRUE) {
+            for ($i = 0; $i < $zip->numFiles; $i++) {
+                $filename_only = $zip->getNameIndex($i);
+                $filesInZip[] = $filename_only;
+            }
+        }
+
+        if (is_object($res)) {
+            try {
+                $zip->close();
+            } catch (Exception $e) {
+                //   $this->log('Error: ' . $e->getMessage());
+            }
+
+        }
+
+
+        if ($filesInZip) {
+            $chunks = array_chunk($filesInZip, 1000);
+
+            $steps_file = __DIR__ . DIRECTORY_SEPARATOR . 'unzip_steps.json';
+
+            $json = json_encode($chunks);
+            file_put_contents($steps_file, $json);
+
+            return ['status' => 'success', 'unzip_steps_needed' => count($chunks)];
+
+        }
+
+
+    }
+
+    public function unzipAppExecStep($step)
+    {
+        $step = intval($step);
+        $version = $_COOKIE['install_version_source'];
+        $zipFile = $_COOKIE['install_version_zip_file'];
+        $version = str_replace('..', '', $version);
+        $zipFile = str_replace('..', '', $zipFile);
+        $extractToFolder = __DIR__ . DIRECTORY_SEPARATOR . 'mw-app-unziped';
+        $this->log('Unzipping step ' . $step . ' of ' . $version . ' version files...');
+
+        $zip = new \ZipArchive;
+        $res = $zip->open(__DIR__ . DIRECTORY_SEPARATOR . $zipFile);
+        if ($res === TRUE) {
+            $steps_file = __DIR__ . DIRECTORY_SEPARATOR . 'unzip_steps.json';
+            $steps = json_decode(file_get_contents($steps_file), true);
+            if (isset($steps[$step])) {
+                $files = $steps[$step];
+                $logOnce = false;
+                foreach ($files as $file) {
+                    if (!$logOnce) {
+                        $this->log('Unzipping ' . str_limit($file, 50) . ' ...');
+                        $logOnce = true;
+                    }
+                    $dn = dirname($extractToFolder . DIRECTORY_SEPARATOR . $file);
+                    if (!is_dir($dn)) {
+                        mkdir_recursive($dn);
+                    }
+                    $extractThefile = $zip->extractTo($extractToFolder, $file);
+                }
+
+            }
+        }
+        if (is_object($zip)) {
+            $zip->close();
+        }
+        return ['status' => 'success', 'unzip_step_executed' => $step];
+
+    }
+
     public function unzippApp()
     {
         $version = $_COOKIE['install_version_source'];
         $zipFile = $_COOKIE['install_version_zip_file'];
+        $version = str_replace('..', '', $version);
+        $zipFile = str_replace('..', '', $zipFile);
 
         $this->log('Unzipping ' . $version . ' version files...');
 
@@ -157,7 +243,6 @@ class StandaloneUpdateExecutor
         $replace = new StandaloneUpdateReplacer();
         $replace->logger = $this;
         $step = $replace->replaceFilesExecCleanupStep();
-
 
 
         return ['status' => 'success', 'step_executed' => $step];
@@ -235,11 +320,11 @@ class StandaloneUpdateExecutor
 
     public function downloadFileProgress($resource, $downloadSize, $downloaded, $uploadSize, $uploaded)
     {
-        if($downloadSize > 0 and $downloaded > 0) {
+        if ($downloadSize > 0 and $downloaded > 0) {
             $percent = round(($downloaded / $downloadSize) * 100, 2);
             $this->log('Downloaded ' . $percent . '%');
         }
-       // $this->log('Downloaded ' . $downloaded . ' of ' . $downloadSize . ' bytes.');
+        // $this->log('Downloaded ' . $downloaded . ' of ' . $downloadSize . ' bytes.');
 
 
 //         [
@@ -269,9 +354,21 @@ if (isset($_REQUEST['format']) && $_REQUEST['format'] == "json") {
         $json['updating'] = $update->startUpdating();
     }
 
-    if (isset($_GET['unzippApp']) && $_GET['unzippApp'] == 1) {
+    if (isset($_GET['unzippApp']) && $_GET['unzippApp']) {
         $update = new StandaloneUpdateExecutor();
         $json['unzipping'] = $update->unzippApp();
+    }
+
+
+    if (isset($_GET['unzipAppExecStep'])) {
+        $update = new StandaloneUpdateExecutor();
+        $json['unzipping'] = $update->unzipAppExecStep(intval($_GET['unzipAppExecStep']));
+    }
+
+
+    if (isset($_GET['unzippAppGetNumberOfStepsNeeded']) && $_GET['unzippAppGetNumberOfStepsNeeded'] == 1) {
+        $update = new StandaloneUpdateExecutor();
+        $json['unzipping'] = $update->unzippAppGetNumberOfStepsNeeded();
     }
 
     if (isset($_GET['replaceFiles']) && $_GET['replaceFiles'] == 1) {
@@ -467,7 +564,7 @@ class StandaloneUpdateReplacer
             @$todo($fileinfo->getRealPath());
         }
 
-       return @rmdir($path);
+        return @rmdir($path);
     }
 
     public function getFilesFromPath($path)

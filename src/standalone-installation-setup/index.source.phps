@@ -37,7 +37,18 @@
                     setTimeout(function() {
                     $.get("actions.php?startUpdating=1&format=json", function(data) {
                         if (data.updating.downloaded) {
-                            $.get("actions.php?unzippApp=1&format=json", function (data) {
+                            $.get("actions.php?unzippAppGetNumberOfStepsNeeded=1&format=json", function (data) {
+                                    if (data.unzipping.unzip_steps_needed) {
+                                        execUnzipChunkStepsAjax(data.unzipping.unzip_steps_needed)
+                                    } else {
+                                        $('.js-update-log').html("Cannot open the zip with updates file.");
+                                    }
+                            });
+
+
+
+
+                       /*     $.get("actions.php?unzippApp=1&format=json", function (data) {
                                 if (data.unzipping.unzipped) {
                                     $.get("actions.php?replaceFilesPrepareStepsNeeded=1&format=json", function (data) {
                                         if (data.replace_steps.steps_needed) {
@@ -51,6 +62,11 @@
                                     $('.js-update-log').html("Can't unzip the app.");
                                 }
                             });
+*/
+
+
+
+
                         } else {
                             $('.js-update-log').html("Can't download the app.");
                         }
@@ -63,9 +79,68 @@
 
     async function execCleanupStepAjax() {
         await $.get('actions.php?replaceFilesExecCleanupStep=1&format=json', function(data) {
+
         });
     }
-    async function execReplaceStepsAjax(numsteps, step) {
+
+    function execUnzipChunkStepsAjax(numsteps, step) {
+        if (typeof step === 'undefined') {
+            step = 0;
+        }
+
+        if (step > numsteps) {
+            return;
+        }
+
+        $('.js-updating-the-software-text').html("Executing unzip step " + step + " of " + numsteps);
+
+
+
+
+        $.ajax({
+            url: 'actions.php?unzipAppExecStep=' + step + '&format=json',
+            type: 'GET',
+            data: {
+                format: 'json'
+            },
+            cache: false,
+
+            success: function (data2) {
+                if (data2 && data2.unzipping && data2.unzipping.unzip_step_executed) {
+                    if (parseInt(data2.unzipping.unzip_step_executed) >= parseInt(numsteps)) {
+
+
+                        setTimeout(function () {
+                            $('.blob').fadeOut();
+                            $('.js-updating-the-software-text').html('Unziping is done. Now we will replace files.');
+                            $('.js-update-log').html("Preparing to replace files...");
+
+
+                            $.get("actions.php?replaceFilesPrepareStepsNeeded=1&format=json", function (data) {
+                                if (data.replace_steps.steps_needed) {
+                                    execReplaceStepsAjax(data.replace_steps.steps_needed)
+                                } else {
+                                    $('.js-update-log').html("Can't prepare replace steps.");
+                                }
+
+                            });
+
+                         }, 200);
+                    }
+
+                }
+            },
+            complete: function (data2) {
+                step++;
+                execUnzipChunkStepsAjax(numsteps, step)
+            }
+        })
+
+    }
+
+
+
+      function execReplaceStepsAjax(numsteps, step) {
         if (typeof step === 'undefined') {
             step = 0;
         }
@@ -77,15 +152,16 @@
         //   for (let step = 0; step < numsteps; step++) {
 
         $('.js-updating-the-software-text').html("Executing replace step " + step + " of " + numsteps);
+        $('.js-update-log').html("Replacing files...");
 
-        await $.ajax({
+          $.ajax({
             url: 'actions.php?replaceFilesExecStep='+step+'&format=json',
             type: 'GET',
             data: {
                 replaceFilesExecStep: step,
                 format: 'json'
             },
-            async: false, //blocks window close
+
             success: function (data2) {
                 if (data2.replace_step_result.step_executed) {
                     if(parseInt(data2.replace_step_result.step_executed) >= parseInt(numsteps)) {
