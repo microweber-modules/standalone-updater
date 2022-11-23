@@ -184,7 +184,7 @@ class StandaloneUpdateExecutor
                 foreach ($files as $file) {
                     $file = normalize_path($file, false);
                     if (!$logOnce) {
-                        $this->log('Unzipping ' . str_limit($file, 50) . ' ...');
+                     //   $this->log('Unzipping ' . basename($file). ' ...');
                         $logOnce = true;
                     }
                     $dn = dirname($extractToFolder . DIRECTORY_SEPARATOR . $file);
@@ -441,6 +441,7 @@ class StandaloneUpdateReplacer
 
     public function replaceFilesExecStep($step)
     {
+        $step = intval($step);
         if ($step == 0) {
             $this->deleteOldDirectories();
         }
@@ -448,6 +449,7 @@ class StandaloneUpdateReplacer
         $steps_file = $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'replace_steps.json';
         $step_data = json_decode(file_get_contents($steps_file), true);
 
+        $total = count(array_keys($step_data));
 
         if (isset($step_data[$step]) and is_array($step_data[$step]) and !empty($step_data[$step])) {
             $newFilesForCopy = $step_data[$step];
@@ -456,6 +458,10 @@ class StandaloneUpdateReplacer
         }
 
         $this->log('Completed replace step ' . $step);
+
+        if(intval($step) > 1 and ($total == $step)){
+            $this->log('Update is completed');
+         }
 
         return $step;
     }

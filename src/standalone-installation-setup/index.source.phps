@@ -47,21 +47,24 @@
 */
 
 
+                         //   startUnzipAjaxOnSingleStep();
+                            startUnzipAjaxOnMultiSteps();
 
-                          $.get("actions.php?unzippApp=1&format=json", function (data) {
-                                if (data.unzipping.unzipped) {
-                                    $.get("actions.php?replaceFilesPrepareStepsNeeded=1&format=json", function (data) {
-                                        if (data.replace_steps.steps_needed) {
-                                            execReplaceStepsAjax(data.replace_steps.steps_needed)
-                                        } else {
-                                            $('.js-update-log').html("Can't prepare replace steps.");
-                                        }
 
-                                    });
-                                } else {
-                                    $('.js-update-log').html("Can't unzip the app.");
-                                }
-                            });
+                          // $.get("actions.php?unzippApp=1&format=json", function (data) {
+                          //       if (data.unzipping.unzipped) {
+                          //           $.get("actions.php?replaceFilesPrepareStepsNeeded=1&format=json", function (data) {
+                          //               if (data.replace_steps.steps_needed) {
+                          //                   execReplaceStepsAjax(data.replace_steps.steps_needed)
+                          //               } else {
+                          //                   $('.js-update-log').html("Can't prepare replace steps.");
+                          //               }
+                          //
+                          //           });
+                          //       } else {
+                          //           $('.js-update-log').html("Can't unzip the app.");
+                          //       }
+                          //   });
 
 
 
@@ -77,11 +80,42 @@
         });
     });
 
-      function execCleanupStepAjax() {
+    function execCleanupStepAjax() {
           $.get('actions.php?replaceFilesExecCleanupStep=1&format=json', function(data) {
 
         });
     }
+
+    function startUnzipAjaxOnSingleStep() {
+        $.get("actions.php?unzippApp=1&format=json", function (data) {
+            if (data.unzipping.unzipped) {
+                $.get("actions.php?replaceFilesPrepareStepsNeeded=1&format=json", function (data) {
+                    if (data.replace_steps.steps_needed) {
+                        execReplaceStepsAjax(data.replace_steps.steps_needed)
+                    } else {
+                        $('.js-update-log').html("Can't prepare replace steps.");
+                    }
+
+                });
+            } else {
+                $('.js-update-log').html("Can't unzip the app.");
+            }
+        });
+
+    }
+
+    function startUnzipAjaxOnMultiSteps() {
+        $.get("actions.php?unzippAppGetNumberOfStepsNeeded=1&format=json", function (data) {
+            if (data.unzipping.unzip_steps_needed) {
+                execUnzipChunkStepsAjax(data.unzipping.unzip_steps_needed)
+            } else {
+                $('.js-update-log').html("Cannot open the zip with updates file.");
+            }
+        });
+
+    }
+
+
 
     function execUnzipChunkStepsAjax(numsteps, step) {
         if (typeof step === 'undefined') {
@@ -103,6 +137,8 @@
             data: {
                 format: 'json'
             },
+
+
             cache: false,
 
             success: function (data2) {
@@ -131,10 +167,13 @@
                 }
             },
             complete: function (data2) {
-                step++;
-                execUnzipChunkStepsAjax(numsteps, step)
+                // step++;
+                // execUnzipChunkStepsAjax(numsteps, step)
             }
-        })
+        }).done(function() {
+            step++;
+            execUnzipChunkStepsAjax(numsteps, step)
+        });
 
     }
 
@@ -152,11 +191,11 @@
         //   for (let step = 0; step < numsteps; step++) {
 
         $('.js-updating-the-software-text').html("Executing replace step " + step + " of " + numsteps);
-        $('.js-update-log').html("Replacing files...");
 
           $.ajax({
             url: 'actions.php?replaceFilesExecStep='+step+'&format=json',
             type: 'GET',
+
             data: {
                 replaceFilesExecStep: step,
                 format: 'json'
@@ -174,27 +213,41 @@
                         // }, 15000);
                      setTimeout(function () {
                          $('.blob').fadeOut();
+                         preventWindowClose = false;
                          $('.js-updating-the-software-text').html('Done!');
                          $('.js-update-log').html("You can visit your site now.");
-                         $('.js-update-log').append("<br><br><a class='mw-standalone-text' href='../../../'>Go to site</a>");
-                     }, 1000);
+                         $('.js-update-log').append("<br><br><a class='mw-standalone-text' href='../../../'>Continue</a>");
+                      }, 1000);
                     }
 
                 }
             },
             complete: function (data2) {
-                step++;
-
-                execReplaceStepsAjax(numsteps, step)
-
-                if(step >= numsteps) {
-                    setTimeout(function () {
-                        execCleanupStepAjax()
-                    }, 15000);
-                }
+                // step++;
+                //
+                // execReplaceStepsAjax(numsteps, step)
+                //
+                // if(step >= numsteps) {
+                //     setTimeout(function () {
+                //         //    execCleanupStepAjax()
+                //     }, 15000);
+                // }
              }
-        });
+        }).done(function() {
+              var shouldClean = false;
+              if(step >= numsteps) {
+                  var shouldClean = true;
+              }
+              step++;
 
+              execReplaceStepsAjax(numsteps, step)
+
+              if(shouldClean) {
+                  setTimeout(function () {
+                        execCleanupStepAjax()
+                  }, 7000);
+              }
+          });
 
         //  }
     }
@@ -208,6 +261,7 @@
                     if (jsonLogStatus.success) {
                        $('.blob').fadeOut();
                         $('.js-updating-the-software-text').html('Done!');
+                        preventWindowClose = false;
                         clearInterval(readlogInterval);
                         $('.js-update-log').html(jsonLogStatus.message);
                     }
@@ -218,6 +272,10 @@
             });
         }, 700);
     }
+
+    preventWindowClose = false;
+
+
   </script>
 
 
