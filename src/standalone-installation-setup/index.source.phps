@@ -45,7 +45,7 @@
                                     }
                             });
 */
-
+                            preventWindowClose = true;
 
                          //   startUnzipAjaxOnSingleStep();
                             startUnzipAjaxOnMultiSteps();
@@ -274,6 +274,15 @@
     }
 
     preventWindowClose = false;
+
+
+    window.addEventListener('beforeunload', e => {
+        if (!preventWindowClose) return;
+        // Cancel the event
+        e.preventDefault();
+        // Chrome requires returnValue to be set
+        e.returnValue = '';
+    });
 
 
   </script>
