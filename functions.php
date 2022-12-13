@@ -26,7 +26,55 @@ function mw_standalone_updater_get_latest_composer_json()
         }
     });
 }
+function mw_standalone_updater_has_curl_errors()
+{
+    $requestUrl = 'http://updater.microweberapi.com/builds/master/composer.json';
 
+    $ch = curl_init($requestUrl);
+    curl_setopt($ch, CURLOPT_COOKIEJAR, mw_cache_path() . 'global/cookie.txt');
+    curl_setopt($ch, CURLOPT_COOKIEFILE, mw_cache_path() . 'global/cookie.txt');
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+    curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/4.0 (compatible; MSIE 5.01; Microweber ' . MW_VERSION . ';)');
+
+    curl_setopt($ch, CURLOPT_HTTP_VERSION , CURL_HTTP_VERSION_1_1);
+    curl_setopt($ch, CURLOPT_IPRESOLVE, CURL_IPRESOLVE_V4);
+    curl_setopt($ch, CURLOPT_DNS_USE_GLOBAL_CACHE, false );
+    curl_setopt($ch, CURLOPT_DNS_CACHE_TIMEOUT, 2 );
+
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 300);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 400);
+    curl_setopt($ch,  CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch,  CURLOPT_SSL_VERIFYHOST, false);
+
+    $result = curl_exec($ch);
+
+    curl_close($ch);
+
+    $curl_error = curl_error($ch);
+    if($curl_error){
+
+    return $curl_error;
+    }
+}
+function mw_standalone_updater_get_url_content($url)
+{
+    // get the content with curl
+     $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+    $content = curl_exec($ch);
+
+    if (curl_errno($ch)) {
+        return false;
+    }
+    curl_close($ch);
+    return $content;
+
+}
 function mw_standalone_updater_delete_recursive($dir)
 {
     if (!is_dir($dir)) {

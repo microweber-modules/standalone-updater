@@ -36,7 +36,19 @@ if (!class_exists('ZipArchive') ) {
     $canIUpdate = false;
     $canIUpdateMessages[] = 'ZipArchive PHP extension is required auto updater.';
 }
-
+$curl_errors = mw_standalone_updater_has_curl_errors();
+if ($curl_errors) {
+    $canIUpdate = false;
+    $canIUpdateMessages[] = $curl_errors;
+}
+if (!function_exists('curl_init') ) {
+    $canIUpdate = false;
+    $canIUpdateMessages[] = 'The Curl PHP extension is required auto updater.';
+}
+if (!function_exists('json_decode') ) {
+    $canIUpdate = false;
+    $canIUpdateMessages[] = 'The JSON PHP extension is required auto updater.';
+}
 
 if (!is_writable($projectMainDir . DS . 'src')) {
     $canIUpdate = false;
