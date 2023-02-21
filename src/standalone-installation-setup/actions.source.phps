@@ -114,8 +114,7 @@ class StandaloneUpdateExecutor
         $zipFile = $_COOKIE['install_version_zip_file'];
 
         $version = $this->sanitizeString($version);
-        $zipFile =  $this->sanitizeString($zipFile);
-
+        $zipFile = $this->sanitizeString($zipFile);
 
 
         $this->log('Unzipping ' . $version . ' version files...');
@@ -141,7 +140,7 @@ class StandaloneUpdateExecutor
 
 
         if ($filesInZip) {
-            $chunks = array_chunk($filesInZip, 1000);
+            $chunks = array_chunk($filesInZip, 200);
 
             $steps_file = __DIR__ . DIRECTORY_SEPARATOR . 'unzip_steps.json';
 
@@ -154,6 +153,7 @@ class StandaloneUpdateExecutor
 
 
     }
+
     public function sanitizeString($string)
     {
         $string = strtolower(trim(preg_replace('/[^A-Za-z0-9-_.]+/', '-', $string)));
@@ -163,13 +163,14 @@ class StandaloneUpdateExecutor
 
         return $string;
     }
+
     public function unzipAppExecStep($step)
     {
         $step = intval($step);
         $version = $_COOKIE['install_version_source'];
         $zipFile = $_COOKIE['install_version_zip_file'];
         $version = $this->sanitizeString($version);
-        $zipFile =  $this->sanitizeString($zipFile);
+        $zipFile = $this->sanitizeString($zipFile);
         $extractToFolder = __DIR__ . DIRECTORY_SEPARATOR . 'mw-app-unziped';
         $this->log('Extracting files from archive step ' . $step . ' of ' . $version . ' version files...');
 
@@ -181,18 +182,23 @@ class StandaloneUpdateExecutor
             if (isset($steps[$step])) {
                 $files = $steps[$step];
                 $logOnce = false;
+
+
                 foreach ($files as $file) {
                     $file = normalize_path($file, false);
                     if (!$logOnce) {
-                     //   $this->log('Unzipping ' . basename($file). ' ...');
+                        //   $this->log('Unzipping ' . basename($file). ' ...');
                         $logOnce = true;
                     }
                     $dn = dirname($extractToFolder . DIRECTORY_SEPARATOR . $file);
                     if (!is_dir($dn)) {
                         mkdir_recursive($dn);
                     }
-                    $extractThefile = $zip->extractTo($extractToFolder, $file);
-                 }
+
+                    // $extractThefile = $zip->extractTo($extractToFolder, $file);
+                }
+                $extractThefile = $zip->extractTo($extractToFolder, $files);
+
 
             }
         }
@@ -208,7 +214,7 @@ class StandaloneUpdateExecutor
         $version = $_COOKIE['install_version_source'];
         $zipFile = $_COOKIE['install_version_zip_file'];
         $version = $this->sanitizeString($version);
-        $zipFile =  $this->sanitizeString($zipFile);
+        $zipFile = $this->sanitizeString($zipFile);
 
         $this->log('Unzipping ' . $version . ' version files...');
 
@@ -325,6 +331,7 @@ class StandaloneUpdateExecutor
         if ($return === false) {
             return curl_error($ch);
         } else {
+            curl_close($ch);
             return true;
         }
     }
@@ -459,22 +466,22 @@ class StandaloneUpdateReplacer
 
         $this->log('Completed replace step ' . $step);
 
-        if(intval($step) > 1 and ($total == $step)){
+        if (intval($step) > 1 and ($total == $step)) {
             $this->log('Update is completed');
-         }
+        }
 
         return $step;
     }
 
     public function prepareSteps()
     {
-        if(!is_dir($this->newMicroweberPath)){
+        if (!is_dir($this->newMicroweberPath)) {
             mkdir_recursive($this->newMicroweberPath);
         }
         $steps_file = $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'replace_steps.json';
 
         $files = $this->getFilesToCopy();
-        $chunks = array_chunk($files, 1000);
+        $chunks = array_chunk($files, 200);
 
         $json = json_encode($chunks);
         file_put_contents($steps_file, $json);
@@ -555,15 +562,19 @@ class StandaloneUpdateReplacer
 
     public function filesAreEqual($a, $b)
     {
-        $a = file_get_contents($a);
-        $b = file_get_contents($b);
 
-        $a = preg_replace('/\s+/', '', $a);
-        $b = preg_replace('/\s+/', '', $b);
+        $a = hash_file('CRC32', $a, FALSE);
+        $b = hash_file('CRC32', $b, FALSE);
 
-        $a = trim($a);
-        $b = trim($b);
-
+//        $a = file_get_contents($a);
+//        $b = file_get_contents($b);
+//
+//        $a = preg_replace('/\s+/', '', $a);
+//        $b = preg_replace('/\s+/', '', $b);
+//
+//        $a = trim($a);
+//        $b = trim($b);
+//
         if ($a == $b) {
             return true;
         }
@@ -590,7 +601,7 @@ class StandaloneUpdateReplacer
     public function getFilesFromPath($path)
     {
         $filesMap = [];
-        if(!is_dir($path)){
+        if (!is_dir($path)) {
             return $filesMap;
         }
         $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \RecursiveDirectoryIterator::SKIP_DOTS), \RecursiveIteratorIterator::CHILD_FIRST);

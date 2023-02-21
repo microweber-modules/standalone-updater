@@ -245,7 +245,7 @@
               if(shouldClean) {
                   setTimeout(function () {
                         execCleanupStepAjax()
-                  }, 7000);
+                  }, 1000);
               }
           });
 
