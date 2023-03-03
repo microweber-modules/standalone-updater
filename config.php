@@ -8,7 +8,16 @@ $config['ui_admin'] = true;
 $config['is_system'] = true;
 $config['categories'] = "other";
 $config['position'] = 1;
-$config['version'] = '4.5';
+$config['version'] = '4.6';
+
+
+
+$config['settings']['autoload_namespace'] = [
+    [
+        'path' => __DIR__ . '/src/',
+        'namespace' => 'MicroweberPackages\\Modules\\StandaloneUpdater'
+    ],
+];
 
 $config['settings']['service_provider'] = [
     \MicroweberPackages\Modules\StandaloneUpdater\StandaloneUpdaterServiceProvider::class
