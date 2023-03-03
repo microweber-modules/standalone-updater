@@ -492,11 +492,18 @@ class StandaloneUpdateReplacer
     public function getFilesToCopy()
     {
         $newFilesForCopy = [];
+        //add new config files with doNotReplace option
+        $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath($this->newMicroweberPath . DIRECTORY_SEPARATOR . 'config', ['doNotReplace' => true]));
+
+        //add other files
         $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath($this->newMicroweberPath . DIRECTORY_SEPARATOR . 'userfiles' . DIRECTORY_SEPARATOR . 'templates'));
         $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath($this->newMicroweberPath . DIRECTORY_SEPARATOR . 'userfiles' . DIRECTORY_SEPARATOR . 'modules'));
         $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath($this->newMicroweberPath . DIRECTORY_SEPARATOR . 'userfiles' . DIRECTORY_SEPARATOR . 'elements'));
         $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath($this->newMicroweberPath . DIRECTORY_SEPARATOR . 'src'));
         $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath($this->newMicroweberPath . DIRECTORY_SEPARATOR . 'vendor'));
+        $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath($this->newMicroweberPath . DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR . 'build'));
+        $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath($this->newMicroweberPath . DIRECTORY_SEPARATOR . 'resources'));
+
 
         $newFilesForCopy[] = ['realPath' => $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'composer.lock', 'targetPath' => 'composer.lock'];
         $newFilesForCopy[] = ['realPath' => $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'composer.json', 'targetPath' => 'composer.json'];
@@ -505,6 +512,7 @@ class StandaloneUpdateReplacer
         $newFilesForCopy[] = ['realPath' => $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'ABOUT.md', 'targetPath' => 'ABOUT.md'];
         $newFilesForCopy[] = ['realPath' => $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'README.md', 'targetPath' => 'README.md'];
         $newFilesForCopy[] = ['realPath' => $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'CHANGELOG.md', 'targetPath' => 'CHANGELOG.md'];
+
 
         return $newFilesForCopy;
     }
@@ -530,18 +538,23 @@ class StandaloneUpdateReplacer
             if (!is_dir($newFileFolder)) {
                 mkdir_recursive($newFileFolder);
             }
+            $target = $this->microweberPath . $newFile['targetPath'];
 
-            if (is_file($this->microweberPath . $newFile['targetPath'])) {
-                if ($this->filesAreEqual($newFile['realPath'], $this->microweberPath . $newFile['targetPath'])) {
+            if (isset($newFile['doNotReplace']) and $newFile['doNotReplace'] == true and is_file($target)) {
+                continue;
+            }
+
+            if (is_file($target)) {
+                if ($this->filesAreEqual($newFile['realPath'], $target)) {
                     continue;
                 }
             }
 
-            if (is_file($this->microweberPath . $newFile['targetPath'])) {
-                @unlink($this->microweberPath . $newFile['targetPath']);
+            if (is_file($target)) {
+                @unlink($target);
             }
 
-            copy($newFile['realPath'], $this->microweberPath . $newFile['targetPath']);
+            copy($newFile['realPath'], $target);
 
         }
     }
@@ -598,7 +611,7 @@ class StandaloneUpdateReplacer
         return @rmdir($path);
     }
 
-    public function getFilesFromPath($path)
+    public function getFilesFromPath($path, $options = [])
     {
         $filesMap = [];
         if (!is_dir($path)) {
@@ -610,8 +623,9 @@ class StandaloneUpdateReplacer
 
                 $targetPath = $fileinfo->getRealPath();
                 $targetPath = str_replace($this->newMicroweberPath, '', $targetPath);
-
-                $filesMap[] = ['realPath' => $fileinfo->getRealPath(), 'targetPath' => $targetPath];
+                $options['realPath'] = $fileinfo->getRealPath();
+                $options['targetPath'] = $targetPath;
+                $filesMap[] = $options;
             }
         }
         return $filesMap;
