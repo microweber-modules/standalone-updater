@@ -554,7 +554,7 @@ class StandaloneUpdateReplacer
                 @unlink($target);
             }
 
-            copy($newFile['realPath'], $target);
+            @copy($newFile['realPath'], $target);
 
         }
     }
