@@ -126,7 +126,14 @@
             return;
         }
 
-        $('.js-updating-the-software-text').html("Executing unzip step " + step + " of " + numsteps);
+        var number1 = step;
+        var number2 = numsteps;
+
+        var progressPrecent = (Math.floor((number1 / number2) * 100));
+        var bar = '<br><progress  value="'+ progressPrecent +'" max="100"> '+ progressPrecent +' </progress>'
+      //  $('.js-updating-the-software-text').html("Executing unzip step " + step + " of " + numsteps);
+        $('.js-updating-the-software-text').html("Unzipping the app " + progressPrecent + "%" + bar);
+
 
 
 
@@ -190,7 +197,15 @@
 
         //   for (let step = 0; step < numsteps; step++) {
 
-        $('.js-updating-the-software-text').html("Executing replace step " + step + " of " + numsteps);
+          var number1 = step;
+          var number2 = numsteps;
+
+          var progressPrecent = (Math.floor((number1 / number2) * 100));
+
+
+       // $('.js-updating-the-software-text').html("Executing replace step " + step + " of " + numsteps);
+          var bar = '<br><progress  value="'+ progressPrecent +'" max="100"> '+ progressPrecent +' </progress>'
+        $('.js-updating-the-software-text').html("Replacing files " + progressPrecent + "%" + bar);
 
           $.ajax({
             url: 'actions.php?replaceFilesExecStep='+step+'&format=json',
@@ -507,6 +522,36 @@
         }
     }
 </style>
+
+  <style>
+      progress {
+          border: solid 2px #ece9e9;
+
+          margin-top:10px;
+          margin-bottom:10px;
+      }
+
+
+
+      /*progress::before,*/
+      /*progress::after {*/
+      /*    content: "";*/
+      /*    position: absolute;*/
+      /*    top: 0;*/
+      /*    left: 0;*/
+      /*    height: 100%;*/
+      /*}*/
+
+      /*progress::before {*/
+      /*    width: 100%;*/
+      /*    background: #ece9e9;*/
+      /*}*/
+
+      /*progress::after {*/
+      /*    width: 75%;*/
+      /*    background: #23ab1e;*/
+      /*}*/
+  </style>
 <div class="mw-standalone-loading">
     <div class="row flex-column align-items-center">
         <div class="blobs">

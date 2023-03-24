@@ -26,5 +26,7 @@ class StandaloneUpdaterServiceProvider extends ServiceProvider
         View::addNamespace('standalone-updater', __DIR__ . '/resources/views');
 
         $this->loadRoutesFrom(__DIR__ . '/routes/web.php');
+
+
     }
 }
