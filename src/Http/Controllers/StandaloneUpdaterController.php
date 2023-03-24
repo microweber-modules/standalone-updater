@@ -131,13 +131,18 @@ class StandaloneUpdaterController extends \MicroweberPackages\Admin\Http\Control
             throw new \Exception('Error downloading');
         }
 
-        $unzippApp = $executor->unzippApp();
+        $run = $executor->unzippApp();
 
-        if ($unzippApp['status'] != 'success') {
+        if ($run['status'] != 'success') {
             throw new \Exception('Error unzipping');
         }
-        $replace = $executor->replaceFiles();
-        if ($unzippApp['status'] != 'success') {
+        $run = $executor->replaceFiles();
+        if ($run['status'] != 'success') {
+            throw new \Exception('Error replacing files');
+        }
+
+        $run = $executor->replaceFilesExecCleanupStep();
+        if ($run['status'] != 'success') {
             throw new \Exception('Error replacing files');
         }
         return true;
