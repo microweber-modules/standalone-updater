@@ -64,6 +64,9 @@ class StandaloneUpdaterController extends \MicroweberPackages\Admin\Http\Control
         if (isset($_POST['version']) && $_POST['version'] == 'dev') {
             $installVersion = 'dev';
         }
+        if (isset($_POST['version']) && $_POST['version'] == 'dev_unstable') {
+            $installVersion = 'dev_unstable';
+        }
 
         setcookie('max_receive_speed_download', get_option('max_receive_speed_download', 'standalone_updater'), time() + (1800 * 5), "/");
         setcookie('admin_url', route('standalone-updater.about-new-version') . '?delete_temp=1', time() + (1800 * 5), "/");
@@ -122,6 +125,9 @@ class StandaloneUpdaterController extends \MicroweberPackages\Admin\Http\Control
         $executor->startSession();
         if ($branch == 'dev') {
             $_COOKIE['install_session_version'] = 'developer';
+            $installVersion = $executor->startUpdating();
+        } else if ($branch == 'dev_unstable') {
+            $_COOKIE['install_session_version'] = 'dev_unstable';
             $installVersion = $executor->startUpdating();
         } else {
             $installVersion = $executor->startUpdating();

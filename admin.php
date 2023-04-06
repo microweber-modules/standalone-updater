@@ -160,7 +160,8 @@ if ($latestPHPVersionNeeded) {
                                     <label> Version:</label>&nbsp;
                                     <select name="version" class="form-control js-standalone-updater-select-version">
                                         <option value="latest">Latest stable</option>
-                                        <option value="dev">Latest Developer (unstable)</option>
+                                        <option value="dev">Latest Developer</option>
+                                        <option value="dev_unstable">Latest Developer (unstable)</option>
                                     </select>
                                 </div>
                             </div>
@@ -168,7 +169,7 @@ if ($latestPHPVersionNeeded) {
                             <script type="text/javascript">
                                 $(document).ready(function () {
                                     $('.js-standalone-updater-select-version').change(function () {
-                                        if ($(this).val() == 'dev') {
+                                        if ($(this).val() == 'dev' || $(this).val() == 'dev_unstable') {
                                             $('.js-standalone-updater-update-button').html('Update');
                                         } else {
                                             $('.js-standalone-updater-update-button').html('Reinstall');

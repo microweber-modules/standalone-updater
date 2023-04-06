@@ -67,6 +67,12 @@ class StandaloneUpdateExecutor
         return ['url' => $latestDevVersionZip];
     }
 
+   public function latestDevUnstableVersion()
+   {
+        $latestDevVersionZip = 'http://updater.microweberapi.com/microweber-dev-unstable.zip';
+
+        return ['url' => $latestDevVersionZip];
+    }
 
     public function startUpdating()
     {
@@ -75,7 +81,10 @@ class StandaloneUpdateExecutor
         if (isset($_COOKIE['install_session_version']) && $_COOKIE['install_session_version'] == 'dev') {
             $version = 'developer';
             $installVersion = $this->latestDevVersion();
-        } else {
+        } else if (isset($_COOKIE['install_session_version']) && $_COOKIE['install_session_version'] == 'dev_unstable') {
+           $version = 'developer unstable';
+           $installVersion = $this->latestDevUnstableVersion();
+       } else {
             $installVersion = $this->latestVersion();
             if (!$installVersion['url']) {
                 $this->log("We can't download latest version right now.");
