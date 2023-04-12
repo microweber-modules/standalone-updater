@@ -13,7 +13,25 @@
 
   </head>
   <body>
+  <style>
+      #progress-bar-standalone-progress-wrapper {
+          background: #fcf8f8;
+          border: 1px solid #fcf8f8;
+          border-radius: 10px;
+          height: 13px;
+          margin: 10px;
+          width: 500px;
+          overflow: hidden;
+      }
 
+      #progress-bar-standalone {
+          width: 0%;
+          height: 13px;
+          background: #54b5fa;
+          padding-left: 20px;
+          color: white;
+      }
+  </style>
   <script type="text/javascript">
     $(document).ready(function() {
 
@@ -130,7 +148,11 @@
         var number2 = numsteps;
 
         var progressPrecent = (Math.floor((number1 / number2) * 100));
-        var bar = '<br><progress  value="'+ progressPrecent +'" max="100"> '+ progressPrecent +' </progress>'
+        //var bar = '<br><progress  value="'+ progressPrecent +'" max="100"> '+ progressPrecent +' </progress>'
+        var bar = '<div id="progress-bar-standalone-progress-wrapper"><div style="width:'+progressPrecent+'%" id="progress-bar-standalone"></div></div>'
+
+
+
       //  $('.js-updating-the-software-text').html("Executing unzip step " + step + " of " + numsteps);
         $('.js-updating-the-software-text').html("Unzipping the app " + progressPrecent + "%" + bar);
 
@@ -204,8 +226,10 @@
 
 
        // $('.js-updating-the-software-text').html("Executing replace step " + step + " of " + numsteps);
-          var bar = '<br><progress  value="'+ progressPrecent +'" max="100"> '+ progressPrecent +' </progress>'
-        $('.js-updating-the-software-text').html("Replacing files " + progressPrecent + "%" + bar);
+       //   var bar = '<br><progress  value="'+ progressPrecent +'" max="100"> '+ progressPrecent +' </progress>'
+          var bar = '<div id="progress-bar-standalone-progress-wrapper"><div style="width:'+progressPrecent+'%" id="progress-bar-standalone"></div></div>'
+
+          $('.js-updating-the-software-text').html("Replacing files " + progressPrecent + "%" + bar);
 
           $.ajax({
             url: 'actions.php?replaceFilesExecStep='+step+'&format=json',
