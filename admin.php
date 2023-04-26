@@ -213,7 +213,7 @@ if ($latestPHPVersionNeeded) {
                                             <div class="mb-0 mt-4 mr-4 js-standalone-updater-settings">
                                                 <a href="#"
                                                    onClick="$('.js-advanced-settings').toggle();"><?php echo _e('Advanced settings'); ?></a>
-                                                <div class="js-advanced-settings d-flex flex-wrap justify-content-center align-items-center" style="display:none">
+                                                <div class="js-advanced-settings d-flex flex-wrap justify-content-center align-items-center text-start" style="display:none">
 
                                                     <div class="col-xl-8 col-12 my-xl-0 my-3 p-2">
                                                         <div class="card mx-2 h-100">
