@@ -133,7 +133,7 @@ if ($latestPHPVersionNeeded) {
                 <div class="card bg-azure-lt ">
                     <div class="card-body ">
                         <div class="row">
-                            <div class="col-12 d-flex justify-content-center">
+                            <div class="col-12 row text-center justify-content-center">
                                 <div class="text-center ">
 
                                     <?php if ($canIUpdate) { ?>
