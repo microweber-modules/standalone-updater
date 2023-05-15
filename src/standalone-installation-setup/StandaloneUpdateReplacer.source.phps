@@ -60,7 +60,8 @@ class StandaloneUpdateReplacer
         $steps_file = $this->newMicroweberPath . DIRECTORY_SEPARATOR . 'replace_steps.json';
 
         $files = $this->getFilesToCopy();
-        $chunks = array_chunk($files, 200);
+        // some servers get too many files open error
+        $chunks = array_chunk($files, 1024);
 
         $json = json_encode($chunks);
         file_put_contents($steps_file, $json);
