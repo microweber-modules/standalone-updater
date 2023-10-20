@@ -76,7 +76,7 @@ class StandaloneUpdateReplacer
         $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath($this->newMicroweberPath . DIRECTORY_SEPARATOR . 'config', ['doNotReplace' => true]));
 
         //add other files
-        $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath($this->newMicroweberPath . DIRECTORY_SEPARATOR . 'userfiles' . DIRECTORY_SEPARATOR . 'templates'));
+        //$newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath($this->newMicroweberPath . DIRECTORY_SEPARATOR . 'userfiles' . DIRECTORY_SEPARATOR . 'templates'));
         $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath($this->newMicroweberPath . DIRECTORY_SEPARATOR . 'userfiles' . DIRECTORY_SEPARATOR . 'modules'));
         $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath($this->newMicroweberPath . DIRECTORY_SEPARATOR . 'userfiles' . DIRECTORY_SEPARATOR . 'elements'));
         $newFilesForCopy = array_merge($newFilesForCopy, $this->getFilesFromPath($this->newMicroweberPath . DIRECTORY_SEPARATOR . 'src'));
