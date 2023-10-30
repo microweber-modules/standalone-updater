@@ -53,50 +53,45 @@
                     });
                     // Start updating
                     setTimeout(function() {
-                    $.get("actions.php?startUpdating=1&format=json", function(data) {
-                        if (data.updating.downloaded) {
-             /*               $.get("actions.php?unzippAppGetNumberOfStepsNeeded=1&format=json", function (data) {
-                                    if (data.unzipping.unzip_steps_needed) {
-                                        execUnzipChunkStepsAjax(data.unzipping.unzip_steps_needed)
-                                    } else {
-                                        $('.js-update-log').html("Cannot open the zip with updates file.");
-                                    }
-                            });
-*/
-                            preventWindowClose = true;
-
-                         //   startUnzipAjaxOnSingleStep();
-                            startUnzipAjaxOnMultiSteps();
-
-
-                          // $.get("actions.php?unzippApp=1&format=json", function (data) {
-                          //       if (data.unzipping.unzipped) {
-                          //           $.get("actions.php?replaceFilesPrepareStepsNeeded=1&format=json", function (data) {
-                          //               if (data.replace_steps.steps_needed) {
-                          //                   execReplaceStepsAjax(data.replace_steps.steps_needed)
-                          //               } else {
-                          //                   $('.js-update-log').html("Can't prepare replace steps.");
-                          //               }
-                          //
-                          //           });
-                          //       } else {
-                          //           $('.js-update-log').html("Can't unzip the app.");
-                          //       }
-                          //   });
-
-
-
-
-
-                        } else {
-                            $('.js-update-log').html("Can't download the app.");
-                        }
-                    });
+                        execStartUpdating();
                     }, 800);
                 });
             }
         });
     });
+
+
+    function execStartUpdating() {
+        preventWindowClose = true;
+
+        $.ajax({
+                type: "GET",
+                url: "actions.php?startUpdating=1&format=json",
+                error: function(xhr, statusText) {
+                    //wait for the backend  to be ready
+                    setInterval(function () {
+                       var html = $('.js-update-log').html();
+                       //chk for text
+                        //"has been downloaded successfully"
+                        if (html.indexOf('has been downloaded successfully') !== -1) {
+                            //if found then start unzip
+                            startUnzipAjaxOnSingleStep();
+                        }
+                    }, 1000);
+
+                },
+                success: function(data){
+                    if (data.updating.downloaded) {
+                        startUnzipAjaxOnMultiSteps();
+                    } else {
+                        $('.js-update-log').html("Can't download the app.");
+                    }
+                }
+            }
+        );
+
+
+    }
 
     function execCleanupStepAjax() {
           $.get('actions.php?replaceFilesExecCleanupStep=1&format=json', function(data) {
@@ -294,12 +289,18 @@
 
         //  }
     }
-
+    requestInProgress = false;
     function readLog(logfile)
     {
        readlogInterval = setInterval(function () {
+
+           if(requestInProgress){
+               return;
+           }
+
             $.get(logfile, function (log) {
                 try {
+                    requestInProgress = true;
                     var jsonLogStatus = JSON.parse(log);
                     if (jsonLogStatus.success) {
                        $('.blob').fadeOut();
@@ -311,9 +312,12 @@
                 } catch(err) {
                     log = log.replace(/(?:\r\n|\r|\n)/g, '<br>');
                     $('.js-update-log').html(log);
+                } finally {
+                    requestInProgress = false; // Set the flag to indicate that the request is complete.
                 }
+
             });
-        }, 700);
+        }, 3000);
     }
 
     preventWindowClose = false;
