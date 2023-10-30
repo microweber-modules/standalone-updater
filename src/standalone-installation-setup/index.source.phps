@@ -60,7 +60,7 @@
         });
     });
 
-
+    downloadTimeoutOrErrorStartedFallback  = false;
     function execStartUpdating() {
         preventWindowClose = true;
 
@@ -75,7 +75,10 @@
                         //"has been downloaded successfully"
                         if (html.indexOf('has been downloaded successfully') !== -1) {
                             //if found then start unzip
-                            startUnzipAjaxOnSingleStep();
+                            if(!downloadTimeoutOrErrorStartedFallback) {
+                                startUnzipAjaxOnSingleStep();
+                                downloadTimeoutOrErrorStartedFallback = true;
+                            }
                         }
                     }, 1000);
 
