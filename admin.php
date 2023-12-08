@@ -162,7 +162,7 @@ if ($latestPHPVersionNeeded) {
                                         <form method="post" action="<?php echo route('api.standalone-updater.update-now'); ?>">
                                             <div class="d-flex justify-content-center">
                                                 <div class="form-group mb-0 mr-4">
-                                                    <div class="input-group align-items-center">
+                                                    <div class="input-group align-items-center h-100">
                                                         <!--                                    <label> Version:</label>&nbsp;-->
                                                         <select name="version" class="form-select js-standalone-updater-select-version">
                                                             <option value="latest">Latest stable</option>
