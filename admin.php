@@ -164,7 +164,7 @@ if ($latestPHPVersionNeeded) {
                                                 <div class="form-group mb-0 mr-4">
                                                     <div class="input-group align-items-center h-100">
                                                         <!--                                    <label> Version:</label>&nbsp;-->
-                                                        <select name="version" class="form-select js-standalone-updater-select-version">
+                                                        <select name="version" class="form-select js-standalone-updater-select-version h-100">
                                                             <option value="latest">Latest stable</option>
                                                             <option value="dev">Latest Developer</option>
                                                             <option value="dev_unstable">Latest Developer (unstable)</option>
